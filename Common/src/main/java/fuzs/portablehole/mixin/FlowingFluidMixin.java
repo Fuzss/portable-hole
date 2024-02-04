@@ -16,6 +16,8 @@ abstract class FlowingFluidMixin extends Fluid {
 
     @Inject(method = "canHoldFluid", at = @At("HEAD"), cancellable = true)
     private void canHoldFluid(BlockGetter level, BlockPos pos, BlockState state, Fluid fluid, CallbackInfoReturnable<Boolean> callback) {
-        if (state.is(ModRegistry.TEMPORARY_HOLE_BLOCK.get())) callback.setReturnValue(false);
+        if (state.is(ModRegistry.TEMPORARY_HOLE_BLOCK.value())) {
+            callback.setReturnValue(false);
+        }
     }
 }

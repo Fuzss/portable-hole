@@ -69,7 +69,7 @@ public class SparkleParticleData implements ParticleOptions {
 	@NotNull
 	@Override
 	public ParticleType<SparkleParticleData> getType() {
-		return ModRegistry.SPARK_PARTICLE_TYPE.get();
+		return ModRegistry.SPARK_PARTICLE_TYPE.value();
 	}
 
 	@Override

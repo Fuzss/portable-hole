@@ -11,11 +11,13 @@ public class PortableHoleClient implements ClientModConstructor {
 
     @Override
     public void onRegisterBlockEntityRenderers(BlockEntityRenderersContext context) {
-        context.registerBlockEntityRenderer(ModRegistry.TEMPORARY_HOLE_BLOCK_ENTITY_TYPE.get(), TemporaryHoleRenderer::new);
+        context.registerBlockEntityRenderer(ModRegistry.TEMPORARY_HOLE_BLOCK_ENTITY_TYPE.value(),
+                TemporaryHoleRenderer::new
+        );
     }
 
     @Override
     public void onRegisterParticleProviders(ParticleProvidersContext context) {
-        context.registerParticleFactory(ModRegistry.SPARK_PARTICLE_TYPE.get(), FXSparkle.Factory::new);
+        context.registerParticleProvider(ModRegistry.SPARK_PARTICLE_TYPE.value(), FXSparkle.Factory::new);
     }
 }

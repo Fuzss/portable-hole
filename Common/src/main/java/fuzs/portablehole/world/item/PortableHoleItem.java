@@ -3,6 +3,7 @@ package fuzs.portablehole.world.item;
 import fuzs.portablehole.PortableHole;
 import fuzs.portablehole.config.ServerConfig;
 import fuzs.portablehole.world.level.block.entity.TemporaryHoleBlockEntity;
+import fuzs.puzzleslib.api.core.v1.Proxy;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -22,10 +23,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class PortableHoleItem extends Item {
-    private static final Component TOOLTIP_DESCRIPTION_COMPONENT = Component.translatable("item.portablehole.portable_hole.description").withStyle(ChatFormatting.GRAY);
+    private static final Component TOOLTIP_DESCRIPTION_COMPONENT = Component.translatable(
+            "item.portablehole.portable_hole.description").withStyle(ChatFormatting.GRAY);
 
-    public PortableHoleItem(Properties p_41383_) {
-        super(p_41383_);
+    public PortableHoleItem(Properties properties) {
+        super(properties);
     }
 
     @Override
@@ -36,14 +38,30 @@ public class PortableHoleItem extends Item {
         Direction clickedFace = context.getClickedFace();
         if (TemporaryHoleBlockEntity.isValidHolePosition(level, clickedPos)) {
             if (!level.isClientSide) {
-                List<BlockPos> positionsInPlane = BlockPos.betweenClosedStream(-1, -1, -1, 1, 1, 1).filter((BlockPos pos) -> {
-                    return clickedFace.getAxis().choose(pos.getX(), pos.getY(), pos.getZ()) == 0;
-                }).map(BlockPos::immutable).toList();
+                List<BlockPos> positionsInPlane = BlockPos.betweenClosedStream(-1, -1, -1, 1, 1, 1)
+                        .filter((BlockPos pos) -> {
+                            return clickedFace.getAxis().choose(pos.getX(), pos.getY(), pos.getZ()) == 0;
+                        })
+                        .map(BlockPos::immutable)
+                        .toList();
                 for (BlockPos pos : positionsInPlane) {
-                    TemporaryHoleBlockEntity.setTemporaryHoleBlock(level, pos.offset(clickedPos), clickedFace.getOpposite(), PortableHole.CONFIG.get(ServerConfig.class).temporaryHoleDepth);
+                    TemporaryHoleBlockEntity.setTemporaryHoleBlock(level,
+                            pos.offset(clickedPos),
+                            clickedFace.getOpposite(),
+                            PortableHole.CONFIG.get(ServerConfig.class).temporaryHoleDepth
+                    );
                 }
-                level.playSound(null, clickedPos.getX(), clickedPos.getY(), clickedPos.getZ(), SoundEvents.ENDERMAN_TELEPORT, SoundSource.NEUTRAL, 0.5F, 0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));
-                player.getCooldowns().addCooldown(this, PortableHole.CONFIG.get(ServerConfig.class).portableHoleCooldown);
+                level.playSound(null,
+                        clickedPos.getX(),
+                        clickedPos.getY(),
+                        clickedPos.getZ(),
+                        SoundEvents.ENDERMAN_TELEPORT,
+                        SoundSource.NEUTRAL,
+                        0.5F,
+                        0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F)
+                );
+                player.getCooldowns()
+                        .addCooldown(this, PortableHole.CONFIG.get(ServerConfig.class).portableHoleCooldown);
                 player.awardStat(Stats.ITEM_USED.get(this));
             }
             return InteractionResult.sidedSuccess(level.isClientSide);
@@ -52,7 +70,11 @@ public class PortableHoleItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack p_41421_, @Nullable Level p_41422_, List<Component> p_41423_, TooltipFlag p_41424_) {
-        p_41423_.add(TOOLTIP_DESCRIPTION_COMPONENT);
+    public void appendHoverText(ItemStack itemStack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag isAdvanced) {
+        tooltipComponents.addAll(Proxy.INSTANCE.splitTooltipLines(this.getDescriptionComponent()));
+    }
+
+    public Component getDescriptionComponent() {
+        return Component.translatable(this.getDescriptionId() + ".description").withStyle(ChatFormatting.GOLD);
     }
 }

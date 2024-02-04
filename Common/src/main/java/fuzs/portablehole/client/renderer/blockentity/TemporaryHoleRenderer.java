@@ -17,7 +17,7 @@ import org.joml.Matrix4f;
 public class TemporaryHoleRenderer implements BlockEntityRenderer<TemporaryHoleBlockEntity> {
 
    public TemporaryHoleRenderer(BlockEntityRendererProvider.Context context) {
-
+      // NO-OP
    }
 
    @Override
