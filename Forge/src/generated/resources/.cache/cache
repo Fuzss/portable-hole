@@ -1,0 +1,6 @@
+eea7327a225f8bd0896620d68e5acbd3d5587bd0 assets/portablehole/blockstates/temporary_hole.json
+8f3f40ef09b82e1f2876591bf26dfaf5332b9b90 assets/portablehole/lang/en_us.json
+ba74ad785f34fce85f3335e4b9dbb1953a50d5b7 assets/portablehole/models/block/temporary_hole.json
+4f2a0202e29560bb3116189495041b3ceb8a23f6 assets/portablehole/models/item/portable_hole.json
+1bb39554be739fc5d20ba7b593459c01d9dfcbcf data/portablehole/loot_tables/inject/chests/stronghold_corridor.json
+74700d556ca80c7a1db5fd4efb09c3ddb26cad66 data/portablehole/tags/blocks/portable_hole_immune.json
