@@ -23,8 +23,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class PortableHoleItem extends Item {
-    private static final Component TOOLTIP_DESCRIPTION_COMPONENT = Component.translatable(
-            "item.portablehole.portable_hole.description").withStyle(ChatFormatting.GRAY);
 
     public PortableHoleItem(Properties properties) {
         super(properties);
