@@ -27,33 +27,24 @@ public class TemporaryHoleRenderer implements BlockEntityRenderer<TemporaryHoleB
       this.renderCube(blockEntity, matrix4f, multiBufferSource.getBuffer(RenderType.endGateway()));
    }
 
-   // Motified verticies, shouldn't have issues with shaders anymore.
    private void renderCube(TemporaryHoleBlockEntity blockEntity, Matrix4f matrix4f, VertexConsumer vertexConsumer) {
       // don't render in same z-level as opposite face from other block, same offset as shulker boxes
-      this.renderFace(blockEntity, matrix4f, vertexConsumer, 1.0F, 0.0F, 0.9995F, 0.9995F, 0.0F, 0.0F, 1.0F, 1.0F, Direction.SOUTH);
-      this.renderFace(blockEntity, matrix4f, vertexConsumer, 0.0F, 1.0F, 0.0005F, 0.0005F, 0.0F, 0.0F, 1.0F, 1.0F, Direction.NORTH);
+      this.renderFace(blockEntity, matrix4f, vertexConsumer, 0.0F, 1.0F, 0.0F, 1.0F, 0.9995F, 0.9995F, 0.9995F, 0.9995F, Direction.SOUTH);
+      this.renderFace(blockEntity, matrix4f, vertexConsumer, 0.0F, 1.0F, 1.0F, 0.0F, 0.0005F, 0.0005F, 0.0005F, 0.0005F, Direction.NORTH);
       this.renderFace(blockEntity, matrix4f, vertexConsumer, 0.9995F, 0.9995F, 1.0F, 0.0F, 0.0F, 1.0F, 1.0F, 0.0F, Direction.EAST);
       this.renderFace(blockEntity, matrix4f, vertexConsumer, 0.0005F, 0.0005F, 0.0F, 1.0F, 0.0F, 1.0F, 1.0F, 0.0F, Direction.WEST);
-      this.renderFace(blockEntity, matrix4f, vertexConsumer, 0.0F, 1.0F, 1.0F, 0.0F, 0.0005F, 0.0005F, 0.0005F, 0.0005F, Direction.DOWN);
-      this.renderFace(blockEntity, matrix4f, vertexConsumer, 0.0F, 1.0F, 0.0F, 1.0F, 0.9995F, 0.9995F, 0.9995F, 0.9995F, Direction.UP);
+      this.renderFace(blockEntity, matrix4f, vertexConsumer, 0.0F, 1.0F, 0.0005F, 0.0005F, 0.0F, 0.0F, 1.0F, 1.0F, Direction.DOWN);
+      this.renderFace(blockEntity, matrix4f, vertexConsumer, 0.0F, 1.0F, 0.9995F, 0.9995F, 1.0F, 1.0F, 0.0F, 0.0F, Direction.UP);
    }
 
-   // Extracted out vertexConsumer.vertex to add UV's
-   private void renderFace(TemporaryHoleBlockEntity blockEntity, Matrix4f matrix4f, VertexConsumer vertexConsumer, float x0, float x1, float z0, float z1, float y0, float y1, float y2, float y3, Direction direction) {
+   private void renderFace(TemporaryHoleBlockEntity blockEntity, Matrix4f matrix4f, VertexConsumer vertexConsumer, float x0, float x1, float y0, float y1, float z0, float z1, float z2, float z3, Direction direction) {
       if (!shouldRenderFace(blockEntity, direction)) {
-         addVertex(vertexConsumer, mat, x1, y1, z1, y1 - 0.5f);
-         addVertex(vertexConsumer, mat, x2, y2, z1, y2 - 0.5f);
-         addVertex(vertexConsumer, mat, x2, y3, z2, y3 - 0.5f);
-         addVertex(vertexConsumer, mat, x1, y4, z2, y4 - 0.5f);
+         vertexConsumer.vertex(matrix4f, x0, y1, z3).endVertex();
+         vertexConsumer.vertex(matrix4f, x1, y1, z2).endVertex();
+         vertexConsumer.vertex(matrix4f, x1, y0, z1).endVertex();
+         vertexConsumer.vertex(matrix4f, x0, y0, z0).endVertex();
       }
    }
-
-   // Extracted method (vertexConsumer)
-   private void addVertex(VertexConsumer vertexConsumer, Matrix4f mat, float x, float y, float z, float p) {
-        vertexConsumer.vertex(mat, x, y, z);
-        vertexConsumer.uv(0.0f, p);
-        vertexConsumer.endVertex();
-    }
 
    private static boolean shouldRenderFace(TemporaryHoleBlockEntity blockEntity, Direction direction) {
       BlockPos blockPos = blockEntity.getBlockPos();
