@@ -7,6 +7,7 @@ import fuzs.puzzleslib.api.block.v1.entity.TickingBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderGetter;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
@@ -41,26 +42,8 @@ public class TemporaryHoleBlockEntity extends BlockEntity implements TickingBloc
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag) {
-        super.saveAdditional(tag);
-        if (this.sourceState != null) {
-            tag.put(TAG_BLOCK_STATE_SOURCE, NbtUtils.writeBlockState(this.sourceState));
-        }
-        if (this.blockEntityTag != null) {
-            tag.put(TAG_BLOCK_ENTITY_SOURCE_TAG, this.blockEntityTag);
-        }
-        tag.putInt(TAG_LIFETIME_TICKS, this.lifetimeTicks);
-        if (this.growthDirection != null) {
-            tag.putByte(TAG_GROWTH_DIRECTION, (byte) this.growthDirection.ordinal());
-        }
-        if (this.growthDistance > 0) {
-            tag.putInt(TAG_GROWTH_DISTANCE, this.growthDistance);
-        }
-    }
-
-    @Override
-    public void load(CompoundTag tag) {
-        super.load(tag);
+    public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
         if (tag.contains(TAG_BLOCK_STATE_SOURCE, Tag.TAG_COMPOUND)) {
             HolderGetter<Block> holdergetter = this.level != null ? this.level.holderLookup(Registries.BLOCK) : BuiltInRegistries.BLOCK.asLookup();
             this.sourceState = NbtUtils.readBlockState(holdergetter, tag.getCompound(TAG_BLOCK_STATE_SOURCE));
@@ -78,6 +61,24 @@ public class TemporaryHoleBlockEntity extends BlockEntity implements TickingBloc
         this.growthDistance = tag.getInt(TAG_GROWTH_DISTANCE);
     }
 
+    @Override
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        if (this.sourceState != null) {
+            tag.put(TAG_BLOCK_STATE_SOURCE, NbtUtils.writeBlockState(this.sourceState));
+        }
+        if (this.blockEntityTag != null) {
+            tag.put(TAG_BLOCK_ENTITY_SOURCE_TAG, this.blockEntityTag);
+        }
+        tag.putInt(TAG_LIFETIME_TICKS, this.lifetimeTicks);
+        if (this.growthDirection != null) {
+            tag.putByte(TAG_GROWTH_DIRECTION, (byte) this.growthDirection.ordinal());
+        }
+        if (this.growthDistance > 0) {
+            tag.putInt(TAG_GROWTH_DISTANCE, this.growthDistance);
+        }
+    }
+
     @Nullable
     @Override
     public Packet<ClientGamePacketListener> getUpdatePacket() {
@@ -85,8 +86,8 @@ public class TemporaryHoleBlockEntity extends BlockEntity implements TickingBloc
     }
 
     @Override
-    public CompoundTag getUpdateTag() {
-        CompoundTag tag = super.getUpdateTag();
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        CompoundTag tag = super.getUpdateTag(registries);
         if (this.sourceState != null) {
             tag.put(TAG_BLOCK_STATE_SOURCE, NbtUtils.writeBlockState(this.sourceState));
         }
@@ -104,7 +105,7 @@ public class TemporaryHoleBlockEntity extends BlockEntity implements TickingBloc
         } else if (this.lifetimeTicks <= 0) {
             this.getLevel().setBlock(this.getBlockPos(), this.sourceState, 3);
             if (this.blockEntityTag != null && this.getLevel().getBlockEntity(this.getBlockPos()) != null) {
-                this.getLevel().getBlockEntity(this.getBlockPos()).load(this.blockEntityTag);
+                this.getLevel().getBlockEntity(this.getBlockPos()).loadWithComponents(this.blockEntityTag, this.getLevel().registryAccess());
             }
             if (PortableHole.CONFIG.get(ServerConfig.class).particlesForReappearingBlocks) {
                 // plays the block breaking sound to provide some feedback
@@ -131,7 +132,7 @@ public class TemporaryHoleBlockEntity extends BlockEntity implements TickingBloc
             if (PortableHole.CONFIG.get(ServerConfig.class).replaceBlockEntities) {
                 BlockEntity blockentity = level.getBlockEntity(blockPos);
                 if (blockentity != null) {
-                    blockEntityTag = blockentity.saveWithoutMetadata();
+                    blockEntityTag = blockentity.saveWithoutMetadata(level.registryAccess());
                     Clearable.tryClear(blockentity);
                 }
             }

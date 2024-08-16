@@ -18,7 +18,6 @@ import org.spongepowered.asm.mixin.Unique;
 abstract class AbstractTextureFabricMixin implements FilteredTexture {
 	@Shadow
 	protected boolean blur;
-
 	@Shadow
 	protected boolean mipmap;
 

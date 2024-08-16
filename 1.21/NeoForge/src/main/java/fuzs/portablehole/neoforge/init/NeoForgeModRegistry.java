@@ -6,6 +6,7 @@ import fuzs.puzzleslib.api.init.v3.registry.RegistryManager;
 import net.minecraft.core.Holder;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 
@@ -15,7 +16,7 @@ public class NeoForgeModRegistry {
             () -> new NeoForgeTemporaryHoleBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_BLACK)
                     .noCollission()
-                    .lightLevel((p_50854_) -> {
+                    .lightLevel((BlockState blockState) -> {
                         return 15;
                     })
                     .strength(-1.0F, 3600000.0F)
@@ -24,6 +25,6 @@ public class NeoForgeModRegistry {
     );
 
     public static void touch() {
-
+        // NO-OP
     }
 }

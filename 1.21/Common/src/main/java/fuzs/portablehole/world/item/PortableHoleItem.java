@@ -18,7 +18,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -43,19 +42,12 @@ public class PortableHoleItem extends Item {
                         .map(BlockPos::immutable)
                         .toList();
                 for (BlockPos pos : positionsInPlane) {
-                    TemporaryHoleBlockEntity.setTemporaryHoleBlock(level,
-                            pos.offset(clickedPos),
-                            clickedFace.getOpposite(),
-                            PortableHole.CONFIG.get(ServerConfig.class).temporaryHoleDepth
+                    TemporaryHoleBlockEntity.setTemporaryHoleBlock(level, pos.offset(clickedPos),
+                            clickedFace.getOpposite(), PortableHole.CONFIG.get(ServerConfig.class).temporaryHoleDepth
                     );
                 }
-                level.playSound(null,
-                        clickedPos.getX(),
-                        clickedPos.getY(),
-                        clickedPos.getZ(),
-                        SoundEvents.ENDERMAN_TELEPORT,
-                        SoundSource.NEUTRAL,
-                        0.5F,
+                level.playSound(null, clickedPos.getX(), clickedPos.getY(), clickedPos.getZ(),
+                        SoundEvents.ENDERMAN_TELEPORT, SoundSource.NEUTRAL, 0.5F,
                         0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F)
                 );
                 player.getCooldowns()
@@ -68,7 +60,7 @@ public class PortableHoleItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack itemStack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag isAdvanced) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         tooltipComponents.addAll(Proxy.INSTANCE.splitTooltipLines(this.getDescriptionComponent()));
     }
 

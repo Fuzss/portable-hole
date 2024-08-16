@@ -6,7 +6,7 @@ plugins {
     alias libs.plugins.minotaur apply false
 }
 
-apply from: "https://raw.githubusercontent.com/Fuzss/modresources/main/gradle/v2/main.gradle"
+apply from: "https://raw.githubusercontent.com/Fuzss/modresources/main/gradle/${libs.versions.minecraft.get()}/main.gradle"
 
 tasks.withType(Jar).configureEach {
     from rootProject.file("../LICENSE-SPARKLE.md")

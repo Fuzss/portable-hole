@@ -18,12 +18,10 @@ public class ModChestLootProvider extends AbstractLootProvider.Simple {
 
     @Override
     public void addLootTables() {
-        this.add(ModRegistry.STRONGHOLD_CORRIDOR_INJECT_LOOT_TABLE,
-                LootTable.lootTable()
-                        .withPool(LootPool.lootPool()
-                                .setRolls(ConstantValue.exactly(1.0F))
-                                .add(LootItem.lootTableItem(ModRegistry.PORTABLE_HOLE_ITEM.value()).setWeight(1))
-                                .add(EmptyLootItem.emptyItem().setWeight(4)))
-        );
+        this.add(ModRegistry.STRONGHOLD_CORRIDOR_INJECT_LOOT_TABLE, LootTable.lootTable()
+                .withPool(LootPool.lootPool()
+                        .setRolls(ConstantValue.exactly(1.0F))
+                        .add(LootItem.lootTableItem(ModRegistry.PORTABLE_HOLE_ITEM.value()).setWeight(1))
+                        .add(EmptyLootItem.emptyItem().setWeight(4))));
     }
 }

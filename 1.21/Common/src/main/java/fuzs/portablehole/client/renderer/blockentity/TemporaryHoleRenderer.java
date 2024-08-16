@@ -39,10 +39,10 @@ public class TemporaryHoleRenderer implements BlockEntityRenderer<TemporaryHoleB
 
    private void renderFace(TemporaryHoleBlockEntity blockEntity, Matrix4f matrix4f, VertexConsumer vertexConsumer, float x0, float x1, float y0, float y1, float z0, float z1, float z2, float z3, Direction direction) {
       if (!shouldRenderFace(blockEntity, direction)) {
-         vertexConsumer.vertex(matrix4f, x0, y1, z3).endVertex();
-         vertexConsumer.vertex(matrix4f, x1, y1, z2).endVertex();
-         vertexConsumer.vertex(matrix4f, x1, y0, z1).endVertex();
-         vertexConsumer.vertex(matrix4f, x0, y0, z0).endVertex();
+         vertexConsumer.addVertex(matrix4f, x0, y1, z3);
+         vertexConsumer.addVertex(matrix4f, x1, y1, z2);
+         vertexConsumer.addVertex(matrix4f, x1, y0, z1);
+         vertexConsumer.addVertex(matrix4f, x0, y0, z0);
       }
    }
 

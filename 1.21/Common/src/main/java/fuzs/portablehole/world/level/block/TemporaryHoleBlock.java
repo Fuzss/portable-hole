@@ -48,7 +48,7 @@ public class TemporaryHoleBlock extends BaseEntityBlock implements TickingEntity
     }
 
     @Override
-    public boolean isPathfindable(BlockState state, BlockGetter level, BlockPos pos, PathComputationType type) {
+    public boolean isPathfindable(BlockState state, PathComputationType type) {
         return false;
     }
 
@@ -83,11 +83,8 @@ public class TemporaryHoleBlock extends BaseEntityBlock implements TickingEntity
         if (level.getBlockEntity(pos) instanceof TemporaryHoleBlockEntity blockEntity) {
             if (blockEntity.getSourceBlockState() != null) {
                 int color = ChatFormatting.BLUE.getColor();
-                SparkleParticleData sparkle = SparkleParticleData.noClip(1.0F,
-                        (color >> 16 & 0xFF) / 255.0F,
-                        (color >> 8 & 0xFF) / 255.0F,
-                        (color & 0xFF) / 255.0F,
-                        20
+                SparkleParticleData sparkle = SparkleParticleData.noClip(1.0F, (color >> 16 & 0xFF) / 255.0F,
+                        (color >> 8 & 0xFF) / 255.0F, (color & 0xFF) / 255.0F, 20
                 );
                 VoxelShape occlusionShape = blockEntity.getSourceBlockState().getShape(level, pos);
                 occlusionShape.forAllEdges((x0, y0, z0, x1, y1, z1) -> {
@@ -95,13 +92,8 @@ public class TemporaryHoleBlock extends BaseEntityBlock implements TickingEntity
                     Vec3 to = new Vec3(x1, y1, z1);
                     if (Math.pow(random.nextDouble(), 2.0) < from.distanceToSqr(to)) {
                         Vec3 vec3 = from.lerp(to, random.nextDouble());
-                        level.addParticle(sparkle,
-                                pos.getX() + vec3.x(),
-                                pos.getY() + vec3.y(),
-                                pos.getZ() + vec3.z(),
-                                0.0,
-                                0.0,
-                                0.0
+                        level.addParticle(sparkle, pos.getX() + vec3.x(), pos.getY() + vec3.y(), pos.getZ() + vec3.z(),
+                                0.0, 0.0, 0.0
                         );
                     }
                 });
