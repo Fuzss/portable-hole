@@ -7,12 +7,12 @@ import net.minecraft.client.renderer.texture.AbstractTexture;
 public class FabricClientAbstractions implements ClientAbstractions {
 
     @Override
-    public void setFilterSave(AbstractTexture texture, boolean filter, boolean mipmap) {
-        ((FilteredTexture) texture).portablehole$setFilterSave(filter, mipmap);
+    public void setBlurMipmap(AbstractTexture abstractTexture, boolean blur, boolean mipmap) {
+        ((FilteredTexture) abstractTexture).portablehole$setBlurMipmap(blur, mipmap);
     }
 
     @Override
-    public void restoreLastFilter(AbstractTexture texture) {
-        ((FilteredTexture) texture).portablehole$restoreLastFilter();
+    public void restoreLastBlurMipmap(AbstractTexture abstractTexture) {
+        ((FilteredTexture) abstractTexture).portablehole$restoreLastBlurMipmap();
     }
 }

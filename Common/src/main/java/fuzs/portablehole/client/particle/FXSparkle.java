@@ -8,51 +8,45 @@
  */
 package fuzs.portablehole.client.particle;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import fuzs.portablehole.PortableHole;
 import fuzs.portablehole.client.core.ClientAbstractions;
 import fuzs.portablehole.config.ClientConfig;
 import fuzs.portablehole.core.particles.SparkleParticleData;
+import fuzs.portablehole.init.ModRegistry;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
-import org.lwjgl.opengl.GL11;
 
 public class FXSparkle extends TextureSheetParticle {
-    public static final ParticleRenderType NORMAL_RENDER = new ParticleRenderType() {
-
+    public static final ParticleRenderType PARTICLE_RENDER_TYPE = new ParticleRenderType() {
         @Override
         public BufferBuilder begin(Tesselator tesselator, TextureManager textureManager) {
-
-            RenderSystem.enableDepthTest();
-            // from https://github.com/VazkiiMods/Botania/pull/4525
+            // adapted from https://github.com/VazkiiMods/Botania/pull/4525
             if (PortableHole.CONFIG.get(ClientConfig.class).opaqueSparkleParticles) {
-                RenderSystem.disableBlend();
-                RenderSystem.depthMask(true);
-                RenderSystem.setShader(GameRenderer::getParticleShader);
+                return ParticleRenderType.PARTICLE_SHEET_OPAQUE.begin(tesselator, textureManager);
             } else {
-                RenderSystem.depthMask(false);
-                RenderSystem.enableBlend();
-                RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-                RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 0.7F);
+                BufferBuilder bufferBuilder = ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT.begin(tesselator,
+                        textureManager);
+                RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
+                return bufferBuilder;
             }
-
-            RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_PARTICLES);
-            return tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
         }
 
         @Override
         public String toString() {
-            return "botania:sparkle";
+            return ModRegistry.SPARK_PARTICLE_TYPE.key().location().toString();
         }
     };
 
@@ -71,7 +65,7 @@ public class FXSparkle extends TextureSheetParticle {
         this.xd = this.yd = this.zd = 0;
         this.quadSize = (this.random.nextFloat() * 0.5F + 0.5F) * 0.2F * size;
         this.lifetime = 3 * m;
-        setSize(0.01F, 0.01F);
+        this.setSize(0.01F, 0.01F);
         this.xo = x;
         this.yo = y;
         this.zo = z;
@@ -79,7 +73,7 @@ public class FXSparkle extends TextureSheetParticle {
         this.corrupt = corrupt;
         this.hasPhysics = !fake && !noClip;
         this.sprite = sprite;
-        setSpriteFromAge(sprite);
+        this.setSpriteFromAge(sprite);
     }
 
     @Override
@@ -89,19 +83,19 @@ public class FXSparkle extends TextureSheetParticle {
 
     @Override
     public void tick() {
-        setSpriteFromAge(this.sprite);
+        this.setSpriteFromAge(this.sprite);
         this.xo = this.x;
         this.yo = this.y;
         this.zo = this.z;
 
         if (this.age++ >= this.lifetime) {
-            remove();
+            this.remove();
         }
 
         this.yd -= 0.04D * this.gravity;
 
         if (this.hasPhysics && !this.fake) {
-            wiggleAround(this.x, (getBoundingBox().minY + getBoundingBox().maxY) / 2.0D, this.z);
+            this.wiggleAround(this.x, (this.getBoundingBox().minY + this.getBoundingBox().maxY) / 2.0D, this.z);
         }
 
         this.move(this.xd, this.yd, this.zd);
@@ -118,7 +112,7 @@ public class FXSparkle extends TextureSheetParticle {
         }
 
         if (this.fake && this.age > 1) {
-            remove();
+            this.remove();
         }
     }
 
@@ -126,14 +120,14 @@ public class FXSparkle extends TextureSheetParticle {
     public void render(VertexConsumer buffer, Camera camera, float partialTicks) {
         Minecraft minecraft = Minecraft.getInstance();
         AbstractTexture abstractTexture = minecraft.getTextureManager().getTexture(TextureAtlas.LOCATION_PARTICLES);
-        ClientAbstractions.INSTANCE.setFilterSave(abstractTexture, true, false);
+        ClientAbstractions.INSTANCE.setBlurMipmap(abstractTexture, true, false);
         super.render(buffer, camera, partialTicks);
-        ClientAbstractions.INSTANCE.restoreLastFilter(abstractTexture);
+        ClientAbstractions.INSTANCE.restoreLastBlurMipmap(abstractTexture);
     }
 
     @Override
     public ParticleRenderType getRenderType() {
-        return NORMAL_RENDER;
+        return PARTICLE_RENDER_TYPE;
     }
 
     public void setGravity(float value) {
@@ -143,19 +137,15 @@ public class FXSparkle extends TextureSheetParticle {
     // [VanillaCopy] Entity.moveTowardClosestSpace with tweaks
     private void wiggleAround(double x, double y, double z) {
         BlockPos blockpos = BlockPos.containing(x, y, z);
-        Vec3 Vector3d = new Vec3(x - (double) blockpos.getX(), y - (double) blockpos.getY(),
-                z - (double) blockpos.getZ()
-        );
+        Vec3 Vector3d = new Vec3(x - (double) blockpos.getX(),
+                y - (double) blockpos.getY(),
+                z - (double) blockpos.getZ());
         BlockPos.MutableBlockPos blockpos$mutable = new BlockPos.MutableBlockPos();
         Direction direction = Direction.UP;
         double d0 = Double.MAX_VALUE;
 
         for (Direction direction1 : new Direction[]{
-                Direction.NORTH,
-                Direction.SOUTH,
-                Direction.WEST,
-                Direction.EAST,
-                Direction.UP
+                Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST, Direction.UP
         }) {
             blockpos$mutable.set(blockpos).move(direction1);
             if (!this.level.getBlockState(blockpos$mutable).isCollisionShapeFullBlock(this.level, blockpos$mutable)) {
@@ -199,9 +189,19 @@ public class FXSparkle extends TextureSheetParticle {
 
         @Override
         public Particle createParticle(SparkleParticleData data, ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
-            return new FXSparkle(level, x, y, z, data.size, data.r, data.g, data.b, data.m, data.fake, data.noClip,
-                    data.corrupt, this.sprite
-            );
+            return new FXSparkle(level,
+                    x,
+                    y,
+                    z,
+                    data.size,
+                    data.r,
+                    data.g,
+                    data.b,
+                    data.m,
+                    data.fake,
+                    data.noClip,
+                    data.corrupt,
+                    this.sprite);
         }
     }
 }

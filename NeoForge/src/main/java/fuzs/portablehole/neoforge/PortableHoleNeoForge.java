@@ -12,7 +12,7 @@ import net.neoforged.fml.common.Mod;
 public class PortableHoleNeoForge {
 
     public PortableHoleNeoForge() {
-        NeoForgeModRegistry.touch();
+        NeoForgeModRegistry.bootstrap();
         ModConstructor.construct(PortableHole.MOD_ID, PortableHole::new);
         DataProviderHelper.registerDataProviders(PortableHole.MOD_ID, ModBlockTagProvider::new,
                 ModChestLootProvider::new

@@ -15,6 +15,6 @@ public class ModBlockTagProvider extends AbstractTagProvider<Block> {
 
     @Override
     public void addTags(HolderLookup.Provider provider) {
-        this.add(ModRegistry.PORTABLE_HOLE_IMMUNE_TAG);
+        this.add(ModRegistry.PORTABLE_HOLE_IMMUNE_BLOCK_TAG);
     }
 }

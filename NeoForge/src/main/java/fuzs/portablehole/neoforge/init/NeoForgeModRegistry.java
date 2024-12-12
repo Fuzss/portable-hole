@@ -11,9 +11,10 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 
 public class NeoForgeModRegistry {
-    static final RegistryManager REGISTRY = RegistryManager.from(PortableHole.MOD_ID);
-    public static final Holder.Reference<Block> TEMPORARY_HOLE_BLOCK = REGISTRY.registerBlock("temporary_hole",
-            () -> new NeoForgeTemporaryHoleBlock(BlockBehaviour.Properties.of()
+    static final RegistryManager REGISTRIES = RegistryManager.from(PortableHole.MOD_ID);
+    public static final Holder.Reference<Block> TEMPORARY_HOLE_BLOCK = REGISTRIES.registerBlock("temporary_hole",
+            NeoForgeTemporaryHoleBlock::new,
+            () -> BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_BLACK)
                     .noCollission()
                     .lightLevel((BlockState blockState) -> {
@@ -21,10 +22,9 @@ public class NeoForgeModRegistry {
                     })
                     .strength(-1.0F, 3600000.0F)
                     .noLootTable()
-                    .pushReaction(PushReaction.BLOCK))
-    );
+                    .pushReaction(PushReaction.BLOCK));
 
-    public static void touch() {
+    public static void bootstrap() {
         // NO-OP
     }
 }

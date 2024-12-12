@@ -45,8 +45,8 @@ public class TemporaryHoleBlockEntity extends BlockEntity implements TickingBloc
     public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         if (tag.contains(TAG_BLOCK_STATE_SOURCE, Tag.TAG_COMPOUND)) {
-            HolderGetter<Block> holdergetter = this.level != null ? this.level.holderLookup(Registries.BLOCK) : BuiltInRegistries.BLOCK.asLookup();
-            this.sourceState = NbtUtils.readBlockState(holdergetter, tag.getCompound(TAG_BLOCK_STATE_SOURCE));
+            HolderGetter<Block> holderGetter = this.level != null ? this.level.holderLookup(Registries.BLOCK) : BuiltInRegistries.BLOCK;
+            this.sourceState = NbtUtils.readBlockState(holderGetter, tag.getCompound(TAG_BLOCK_STATE_SOURCE));
             if (this.sourceState.isAir()) {
                 this.sourceState = null;
             }
@@ -159,7 +159,7 @@ public class TemporaryHoleBlockEntity extends BlockEntity implements TickingBloc
         if (level.hasChunkAt(blockPos) && level.isInWorldBounds(blockPos)) {
             if (blockState.is(ModRegistry.TEMPORARY_HOLE_BLOCK.value())) {
                 return true;
-            } else if (!blockState.isAir() && (!blockState.hasBlockEntity() || PortableHole.CONFIG.get(ServerConfig.class).replaceBlockEntities) && !blockState.is(ModRegistry.PORTABLE_HOLE_IMMUNE_TAG)) {
+            } else if (!blockState.isAir() && (!blockState.hasBlockEntity() || PortableHole.CONFIG.get(ServerConfig.class).replaceBlockEntities) && !blockState.is(ModRegistry.PORTABLE_HOLE_IMMUNE_BLOCK_TAG)) {
                 Block block = blockState.getBlock();
                 if (block instanceof DoublePlantBlock || block instanceof DoorBlock || block instanceof BedBlock) {
                     return false;

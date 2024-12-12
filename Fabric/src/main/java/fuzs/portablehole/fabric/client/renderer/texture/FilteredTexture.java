@@ -10,7 +10,7 @@ package fuzs.portablehole.fabric.client.renderer.texture;
 
 public interface FilteredTexture {
 
-	void portablehole$setFilterSave(boolean bilinear, boolean mipmap);
+	void portablehole$setBlurMipmap(boolean bilinear, boolean mipmap);
 
-	void portablehole$restoreLastFilter();
+	void portablehole$restoreLastBlurMipmap();
 }

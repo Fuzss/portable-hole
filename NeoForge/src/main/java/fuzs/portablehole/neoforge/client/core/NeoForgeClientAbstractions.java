@@ -6,12 +6,12 @@ import net.minecraft.client.renderer.texture.AbstractTexture;
 public class NeoForgeClientAbstractions implements ClientAbstractions {
 
     @Override
-    public void setFilterSave(AbstractTexture texture, boolean filter, boolean mipmap) {
-        texture.setBlurMipmap(filter, mipmap);
+    public void setBlurMipmap(AbstractTexture abstractTexture, boolean blur, boolean mipmap) {
+        abstractTexture.setBlurMipmap(blur, mipmap);
     }
 
     @Override
-    public void restoreLastFilter(AbstractTexture texture) {
-        texture.restoreLastBlurMipmap();
+    public void restoreLastBlurMipmap(AbstractTexture abstractTexture) {
+        abstractTexture.restoreLastBlurMipmap();
     }
 }
