@@ -8,13 +8,10 @@
  */
 package fuzs.portablehole.client.particle;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import fuzs.portablehole.PortableHole;
 import fuzs.portablehole.client.core.ClientAbstractions;
+import fuzs.portablehole.client.renderer.blockentity.ModRenderType;
 import fuzs.portablehole.config.ClientConfig;
 import fuzs.portablehole.core.particles.SparkleParticleData;
 import fuzs.portablehole.init.ModRegistry;
@@ -24,31 +21,17 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
 
-public class FXSparkle extends TextureSheetParticle {
-    public static final ParticleRenderType PARTICLE_RENDER_TYPE = new ParticleRenderType() {
-        @Override
-        public BufferBuilder begin(Tesselator tesselator, TextureManager textureManager) {
-            // adapted from https://github.com/VazkiiMods/Botania/pull/4525
-            if (PortableHole.CONFIG.get(ClientConfig.class).opaqueSparkleParticles) {
-                return ParticleRenderType.PARTICLE_SHEET_OPAQUE.begin(tesselator, textureManager);
-            } else {
-                BufferBuilder bufferBuilder = ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT.begin(tesselator,
-                        textureManager);
-                RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
-                return bufferBuilder;
-            }
-        }
+import java.util.Locale;
 
-        @Override
-        public String toString() {
-            return ModRegistry.SPARK_PARTICLE_TYPE.key().location().toString();
-        }
-    };
+public class FXSparkle extends TextureSheetParticle {
+    public static final ParticleRenderType SPARKLE_PARTICLE_RENDER_TYPE = new ParticleRenderType(ModRegistry.SPARKLE_PARTICLE_TYPE.key()
+            .location()
+            .toString()
+            .toUpperCase(Locale.ROOT), ModRenderType.sparkleParticle(TextureAtlas.LOCATION_PARTICLES));
 
     private final boolean corrupt;
     private final boolean fake;
@@ -127,7 +110,11 @@ public class FXSparkle extends TextureSheetParticle {
 
     @Override
     public ParticleRenderType getRenderType() {
-        return PARTICLE_RENDER_TYPE;
+        if (PortableHole.CONFIG.get(ClientConfig.class).opaqueSparkleParticles) {
+            return ParticleRenderType.PARTICLE_SHEET_OPAQUE;
+        } else {
+            return SPARKLE_PARTICLE_RENDER_TYPE;
+        }
     }
 
     public void setGravity(float value) {

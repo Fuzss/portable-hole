@@ -18,6 +18,6 @@ public class PortableHoleClient implements ClientModConstructor {
 
     @Override
     public void onRegisterParticleProviders(ParticleProvidersContext context) {
-        context.registerParticleProvider(ModRegistry.SPARK_PARTICLE_TYPE.value(), FXSparkle.Factory::new);
+        context.registerParticleProvider(ModRegistry.SPARKLE_PARTICLE_TYPE.value(), FXSparkle.Factory::new);
     }
 }

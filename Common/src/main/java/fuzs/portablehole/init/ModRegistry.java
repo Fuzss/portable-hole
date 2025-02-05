@@ -43,7 +43,7 @@ public class ModRegistry {
     public static final Holder.Reference<Item> PORTABLE_HOLE_ITEM = REGISTRIES.registerItem("portable_hole",
             PortableHoleItem::new,
             () -> new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON));
-    public static final Holder.Reference<ParticleType<SparkleParticleData>> SPARK_PARTICLE_TYPE = REGISTRIES.register(
+    public static final Holder.Reference<ParticleType<SparkleParticleData>> SPARKLE_PARTICLE_TYPE = REGISTRIES.register(
             Registries.PARTICLE_TYPE,
             "sparkle",
             SparkleParticleType::new);

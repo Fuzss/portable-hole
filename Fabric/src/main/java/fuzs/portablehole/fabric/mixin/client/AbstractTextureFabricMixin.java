@@ -23,7 +23,7 @@ abstract class AbstractTextureFabricMixin implements FilteredTexture {
     @Shadow
     public abstract void setFilter(boolean blur, boolean mipmap);
 
-    @Inject(method = "setFilter", at = @At("HEAD"))
+    @Inject(method = "setFilter(ZZ)V", at = @At("HEAD"))
     public void setFilter(boolean blur, boolean mipmap, CallbackInfo callback) {
         this.portablehole$blur = blur;
         this.portablehole$mipmap = mipmap;

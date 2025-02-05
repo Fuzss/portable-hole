@@ -31,7 +31,7 @@ abstract class ParticleEngineFabricMixin {
     private static void addTypes(CallbackInfo callback) {
         RENDER_ORDER = ImmutableList.<ParticleRenderType>builder()
                 .addAll(RENDER_ORDER)
-                .add(FXSparkle.PARTICLE_RENDER_TYPE)
+                .add(FXSparkle.SPARKLE_PARTICLE_RENDER_TYPE)
                 .build();
     }
 }

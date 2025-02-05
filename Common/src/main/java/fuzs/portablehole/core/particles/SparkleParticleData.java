@@ -67,7 +67,7 @@ public class SparkleParticleData implements ParticleOptions {
     @NotNull
     @Override
     public ParticleType<SparkleParticleData> getType() {
-        return ModRegistry.SPARK_PARTICLE_TYPE.value();
+        return ModRegistry.SPARKLE_PARTICLE_TYPE.value();
     }
 
     private void toNetwork(FriendlyByteBuf friendlyByteBuf) {
