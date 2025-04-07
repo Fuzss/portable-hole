@@ -1,34 +1,36 @@
 package fuzs.portablehole.client.renderer.blockentity;
 
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.pipeline.BlendFunction;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
 import fuzs.portablehole.PortableHole;
 import net.minecraft.Util;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.TriState;
 
 import java.util.function.Function;
 
-public final class ModRenderType extends RenderType {
+public abstract class ModRenderType extends RenderType {
+    public static final RenderPipeline SPARKLE_PARTICLE_RENDER_PIPELINE = RenderPipelines.register(RenderPipeline.builder(
+                    RenderPipelines.PARTICLE_SNIPPET)
+            .withLocation("pipeline/translucent_particle")
+            .withBlend(BlendFunction.LIGHTNING)
+            .build());
     private static final Function<ResourceLocation, RenderType> SPARKLE_PARTICLE = Util.memoize((ResourceLocation resourceLocation) -> create(
             PortableHole.id("sparkle_particle").toString(),
-            DefaultVertexFormat.PARTICLE,
-            VertexFormat.Mode.QUADS,
             1536,
             false,
             false,
+            SPARKLE_PARTICLE_RENDER_PIPELINE,
             CompositeState.builder()
-                    .setShaderState(PARTICLE_SHADER)
                     .setTextureState(new TextureStateShard(resourceLocation, TriState.FALSE, false))
-                    .setTransparencyState(LIGHTNING_TRANSPARENCY)
                     .setOutputState(PARTICLES_TARGET)
                     .setLightmapState(LIGHTMAP)
-                    .setWriteMaskState(COLOR_DEPTH_WRITE)
                     .createCompositeState(false)));
 
-    private ModRenderType(String name, VertexFormat format, VertexFormat.Mode mode, int bufferSize, boolean affectsCrumbling, boolean sortOnUpload, Runnable setupState, Runnable clearState) {
-        super(name, format, mode, bufferSize, affectsCrumbling, sortOnUpload, setupState, clearState);
+    private ModRenderType(String string, int i, boolean bl, boolean bl2, Runnable runnable, Runnable runnable2) {
+        super(string, i, bl, bl2, runnable, runnable2);
     }
 
     public static RenderType sparkleParticle(ResourceLocation resourceLocation) {

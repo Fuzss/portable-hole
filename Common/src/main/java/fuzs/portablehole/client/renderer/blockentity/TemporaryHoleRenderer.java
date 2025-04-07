@@ -13,6 +13,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 
 public class TemporaryHoleRenderer implements BlockEntityRenderer<TemporaryHoleBlockEntity> {
@@ -22,7 +23,7 @@ public class TemporaryHoleRenderer implements BlockEntityRenderer<TemporaryHoleB
     }
 
     @Override
-    public void render(TemporaryHoleBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+    public void render(TemporaryHoleBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay, Vec3 cameraPosition) {
         if (!PortableHole.CONFIG.get(ServerConfig.class).portalOverlay) return;
         Matrix4f matrix4f = poseStack.last().pose();
         this.renderCube(blockEntity, matrix4f, bufferSource.getBuffer(RenderType.endGateway()));

@@ -14,8 +14,8 @@ public class ModLanguageProvider extends AbstractLanguageProvider {
     @Override
     public void addTranslations(TranslationBuilder builder) {
         builder.add(ModRegistry.PORTABLE_HOLE_ITEM.value(), "Portable Hole");
+        builder.add(ModRegistry.TEMPORARY_HOLE_BLOCK.value(), "Temporary Hole");
         builder.add(((PortableHoleItem) ModRegistry.PORTABLE_HOLE_ITEM.value()).getDescriptionComponent(),
-                "Click on a block and see what happens!"
-        );
+                "Click on a block and see what happens!");
     }
 }
