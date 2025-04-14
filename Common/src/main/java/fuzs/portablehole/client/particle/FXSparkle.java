@@ -11,7 +11,7 @@ package fuzs.portablehole.client.particle;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import fuzs.portablehole.PortableHole;
 import fuzs.portablehole.client.core.ClientAbstractions;
-import fuzs.portablehole.client.renderer.blockentity.ModRenderType;
+import fuzs.portablehole.client.renderer.ModRenderType;
 import fuzs.portablehole.config.ClientConfig;
 import fuzs.portablehole.core.particles.SparkleParticleData;
 import fuzs.portablehole.init.ModRegistry;

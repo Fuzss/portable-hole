@@ -1,4 +1,4 @@
-package fuzs.portablehole.client.renderer.blockentity;
+package fuzs.portablehole.client.renderer;
 
 import com.mojang.blaze3d.pipeline.BlendFunction;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
@@ -12,11 +12,18 @@ import net.minecraft.util.TriState;
 import java.util.function.Function;
 
 public abstract class ModRenderType extends RenderType {
-    public static final RenderPipeline SPARKLE_PARTICLE_RENDER_PIPELINE = RenderPipelines.register(RenderPipeline.builder(
-                    RenderPipelines.PARTICLE_SNIPPET)
-            .withLocation("pipeline/translucent_particle")
+    /**
+     * Custom blend function for supporting proper translucency.
+     *
+     * @see RenderPipelines#TRANSLUCENT_PARTICLE
+     */
+    public static final RenderPipeline SPARKLE_PARTICLE_RENDER_PIPELINE = RenderPipeline.builder(RenderPipelines.PARTICLE_SNIPPET)
+            .withLocation(PortableHole.id("pipeline/sparkle_particle"))
             .withBlend(BlendFunction.LIGHTNING)
-            .build());
+            .build();
+    /**
+     * @see RenderType#TRANSLUCENT_PARTICLE
+     */
     private static final Function<ResourceLocation, RenderType> SPARKLE_PARTICLE = Util.memoize((ResourceLocation resourceLocation) -> create(
             PortableHole.id("sparkle_particle").toString(),
             1536,
