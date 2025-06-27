@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "portablehole:block/temporary_hole"
+    }
+  }
+}
