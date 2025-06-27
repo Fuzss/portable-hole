@@ -15,7 +15,7 @@ public class PortableHoleClient implements ClientModConstructor {
 
     @Override
     public void onClientSetup() {
-        ItemTooltipRegistry.registerItemTooltip(PortableHoleItem.class, PortableHoleItem::getDescriptionComponent);
+        ItemTooltipRegistry.ITEM.registerItemTooltip(PortableHoleItem.class, PortableHoleItem::getDescriptionComponent);
     }
 
     @Override

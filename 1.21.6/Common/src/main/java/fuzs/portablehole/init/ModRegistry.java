@@ -18,6 +18,7 @@ import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -25,17 +26,7 @@ import net.minecraft.world.level.storage.loot.LootTable;
 public class ModRegistry {
     static final RegistryManager REGISTRIES = RegistryManager.from(PortableHole.MOD_ID);
     public static final Holder.Reference<Block> TEMPORARY_HOLE_BLOCK = REGISTRIES.whenOnFabricLike()
-            .registerBlock("temporary_hole",
-                    TemporaryHoleBlock::new,
-                    () -> BlockBehaviour.Properties.of()
-                            .mapColor(MapColor.COLOR_BLACK)
-                            .noCollission()
-                            .lightLevel((p_50854_) -> {
-                                return 15;
-                            })
-                            .strength(-1.0F, 3600000.0F)
-                            .noLootTable()
-                            .pushReaction(PushReaction.BLOCK));
+            .registerBlock("temporary_hole", TemporaryHoleBlock::new, ModRegistry::temporaryHole);
     public static final Holder.Reference<BlockEntityType<TemporaryHoleBlockEntity>> TEMPORARY_HOLE_BLOCK_ENTITY_TYPE = REGISTRIES.registerBlockEntityType(
             "temporary_hole",
             TemporaryHoleBlockEntity::new,
@@ -57,5 +48,17 @@ public class ModRegistry {
 
     public static void bootstrap() {
         // NO-OP
+    }
+
+    public static BlockBehaviour.Properties temporaryHole() {
+        return BlockBehaviour.Properties.of()
+                .mapColor(MapColor.COLOR_BLACK)
+                .noCollission()
+                .lightLevel((BlockState blockState) -> {
+                    return 15;
+                })
+                .strength(-1.0F, 3600000.0F)
+                .noLootTable()
+                .pushReaction(PushReaction.BLOCK);
     }
 }

@@ -4,12 +4,10 @@ import fuzs.portablehole.PortableHole;
 import fuzs.portablehole.config.ServerConfig;
 import fuzs.portablehole.init.ModRegistry;
 import fuzs.puzzleslib.api.block.v1.entity.TickingBlockEntity;
+import fuzs.puzzleslib.api.util.v1.ValueSerializationHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.protocol.Packet;
@@ -18,8 +16,13 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Predicate;
 
 public class TemporaryHoleBlockEntity extends BlockEntity implements TickingBlockEntity {
     public static final String TAG_BLOCK_STATE_SOURCE = PortableHole.id("source_state").toString();
@@ -32,6 +35,7 @@ public class TemporaryHoleBlockEntity extends BlockEntity implements TickingBloc
     @Nullable
     private CompoundTag blockEntityTag;
     private int lifetimeTicks;
+    @Nullable
     private Direction growthDirection;
     private int growthDistance;
 
@@ -40,42 +44,25 @@ public class TemporaryHoleBlockEntity extends BlockEntity implements TickingBloc
     }
 
     @Override
-    public void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        if (tag.contains(TAG_BLOCK_STATE_SOURCE)) {
-            HolderGetter<Block> holderGetter =
-                    this.level != null ? this.level.holderLookup(Registries.BLOCK) : BuiltInRegistries.BLOCK;
-            this.sourceState = NbtUtils.readBlockState(holderGetter, tag.getCompoundOrEmpty(TAG_BLOCK_STATE_SOURCE));
-            if (this.sourceState.isAir()) {
-                this.sourceState = null;
-            }
-        }
-        if (tag.contains(TAG_BLOCK_ENTITY_SOURCE_TAG)) {
-            this.blockEntityTag = tag.getCompoundOrEmpty(TAG_BLOCK_ENTITY_SOURCE_TAG);
-        }
-        this.lifetimeTicks = tag.getIntOr(TAG_LIFETIME_TICKS, 0);
-        if (tag.contains(TAG_GROWTH_DIRECTION)) {
-            this.growthDirection = Direction.values()[tag.getByteOr(TAG_GROWTH_DIRECTION, (byte) 0)];
-        }
-        this.growthDistance = tag.getIntOr(TAG_GROWTH_DISTANCE, 0);
+    protected void loadAdditional(ValueInput valueInput) {
+        super.loadAdditional(valueInput);
+        this.sourceState = valueInput.read(TAG_BLOCK_STATE_SOURCE, BlockState.CODEC)
+                .filter(Predicate.not(BlockBehaviour.BlockStateBase::isAir))
+                .orElse(null);
+        this.blockEntityTag = valueInput.read(TAG_BLOCK_ENTITY_SOURCE_TAG, CompoundTag.CODEC).orElse(null);
+        this.lifetimeTicks = valueInput.getIntOr(TAG_LIFETIME_TICKS, 0);
+        this.growthDirection = valueInput.read(TAG_GROWTH_DIRECTION, Direction.CODEC).orElse(null);
+        this.growthDistance = valueInput.getIntOr(TAG_GROWTH_DISTANCE, 0);
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
-        if (this.sourceState != null) {
-            tag.put(TAG_BLOCK_STATE_SOURCE, NbtUtils.writeBlockState(this.sourceState));
-        }
-        if (this.blockEntityTag != null) {
-            tag.put(TAG_BLOCK_ENTITY_SOURCE_TAG, this.blockEntityTag);
-        }
-        tag.putInt(TAG_LIFETIME_TICKS, this.lifetimeTicks);
-        if (this.growthDirection != null) {
-            tag.putByte(TAG_GROWTH_DIRECTION, (byte) this.growthDirection.ordinal());
-        }
-        if (this.growthDistance > 0) {
-            tag.putInt(TAG_GROWTH_DISTANCE, this.growthDistance);
-        }
+    protected void saveAdditional(ValueOutput valueOutput) {
+        super.saveAdditional(valueOutput);
+        valueOutput.storeNullable(TAG_BLOCK_STATE_SOURCE, BlockState.CODEC, this.sourceState);
+        valueOutput.storeNullable(TAG_BLOCK_ENTITY_SOURCE_TAG, CompoundTag.CODEC, this.blockEntityTag);
+        valueOutput.putInt(TAG_LIFETIME_TICKS, this.lifetimeTicks);
+        valueOutput.storeNullable(TAG_GROWTH_DIRECTION, Direction.CODEC, this.growthDirection);
+        valueOutput.putInt(TAG_GROWTH_DISTANCE, this.growthDistance);
     }
 
     @Nullable
@@ -103,10 +90,14 @@ public class TemporaryHoleBlockEntity extends BlockEntity implements TickingBloc
             this.getLevel().removeBlock(this.getBlockPos(), false);
         } else if (this.lifetimeTicks <= 0) {
             this.getLevel().setBlock(this.getBlockPos(), this.sourceState, 3);
-            if (this.blockEntityTag != null && this.getLevel().getBlockEntity(this.getBlockPos()) != null) {
-                this.getLevel()
-                        .getBlockEntity(this.getBlockPos())
-                        .loadWithComponents(this.blockEntityTag, this.getLevel().registryAccess());
+            if (this.blockEntityTag != null) {
+                BlockEntity blockEntity = this.getLevel().getBlockEntity(this.getBlockPos());
+                if (blockEntity != null) {
+                    ValueSerializationHelper.load(this.problemPath(),
+                            this.getLevel().registryAccess(),
+                            this.blockEntityTag,
+                            blockEntity::loadWithComponents);
+                }
             }
             if (PortableHole.CONFIG.get(ServerConfig.class).particlesForReappearingBlocks) {
                 // plays the block breaking sound to provide some feedback
@@ -165,16 +156,16 @@ public class TemporaryHoleBlockEntity extends BlockEntity implements TickingBloc
         if (level.hasChunkAt(blockPos) && level.isInWorldBounds(blockPos)) {
             if (blockState.is(ModRegistry.TEMPORARY_HOLE_BLOCK.value())) {
                 return true;
-            } else if (!blockState.isAir() && (!blockState.hasBlockEntity() ||
-                    PortableHole.CONFIG.get(ServerConfig.class).replaceBlockEntities) &&
-                    !blockState.is(ModRegistry.PORTABLE_HOLE_IMMUNE_BLOCK_TAG)) {
+            } else if (!blockState.isAir() && (!blockState.hasBlockEntity()
+                    || PortableHole.CONFIG.get(ServerConfig.class).replaceBlockEntities)
+                    && !blockState.is(ModRegistry.PORTABLE_HOLE_IMMUNE_BLOCK_TAG)) {
                 Block block = blockState.getBlock();
                 if (block instanceof DoublePlantBlock || block instanceof DoorBlock || block instanceof BedBlock) {
                     return false;
                 }
                 float destroySpeed = blockState.getDestroySpeed(level, blockPos);
-                return destroySpeed != -1.0F &&
-                        destroySpeed <= PortableHole.CONFIG.get(ServerConfig.class).maxBlockHardness;
+                return destroySpeed != -1.0F
+                        && destroySpeed <= PortableHole.CONFIG.get(ServerConfig.class).maxBlockHardness;
             }
         }
         return false;

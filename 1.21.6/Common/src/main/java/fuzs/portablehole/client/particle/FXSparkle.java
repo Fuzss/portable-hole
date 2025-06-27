@@ -8,18 +8,13 @@
  */
 package fuzs.portablehole.client.particle;
 
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import fuzs.portablehole.PortableHole;
-import fuzs.portablehole.client.core.ClientAbstractions;
 import fuzs.portablehole.client.renderer.ModRenderType;
 import fuzs.portablehole.config.ClientConfig;
 import fuzs.portablehole.core.particles.SparkleParticleData;
 import fuzs.portablehole.init.ModRegistry;
-import net.minecraft.client.Camera;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
-import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -97,15 +92,6 @@ public class FXSparkle extends TextureSheetParticle {
         if (this.fake && this.age > 1) {
             this.remove();
         }
-    }
-
-    @Override
-    public void render(VertexConsumer buffer, Camera camera, float partialTicks) {
-        Minecraft minecraft = Minecraft.getInstance();
-        AbstractTexture abstractTexture = minecraft.getTextureManager().getTexture(TextureAtlas.LOCATION_PARTICLES);
-        ClientAbstractions.INSTANCE.setBlurMipmap(abstractTexture, true, false);
-        super.render(buffer, camera, partialTicks);
-        ClientAbstractions.INSTANCE.restoreLastBlurMipmap(abstractTexture);
     }
 
     @Override

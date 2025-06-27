@@ -7,7 +7,6 @@ import net.minecraft.Util;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.TriState;
 
 import java.util.function.Function;
 
@@ -31,7 +30,7 @@ public abstract class ModRenderType extends RenderType {
             false,
             SPARKLE_PARTICLE_RENDER_PIPELINE,
             CompositeState.builder()
-                    .setTextureState(new TextureStateShard(resourceLocation, TriState.FALSE, false))
+                    .setTextureState(new TextureStateShard(resourceLocation, false))
                     .setOutputState(PARTICLES_TARGET)
                     .setLightmapState(LIGHTMAP)
                     .createCompositeState(false)));
