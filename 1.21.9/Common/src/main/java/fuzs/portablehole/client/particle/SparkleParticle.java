@@ -8,33 +8,44 @@
  */
 package fuzs.portablehole.client.particle;
 
+import com.mojang.blaze3d.pipeline.BlendFunction;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
 import fuzs.portablehole.PortableHole;
-import fuzs.portablehole.client.renderer.ModRenderType;
 import fuzs.portablehole.config.ClientConfig;
-import fuzs.portablehole.core.particles.SparkleParticleData;
-import fuzs.portablehole.init.ModRegistry;
+import fuzs.portablehole.core.particles.SparkleParticleOptions;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.particle.*;
+import net.minecraft.client.particle.Particle;
+import net.minecraft.client.particle.ParticleProvider;
+import net.minecraft.client.particle.SingleQuadParticle;
+import net.minecraft.client.particle.SpriteSet;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.Locale;
-
-public class FXSparkle extends TextureSheetParticle {
-    public static final ParticleRenderType SPARKLE_PARTICLE_RENDER_TYPE = new ParticleRenderType(ModRegistry.SPARKLE_PARTICLE_TYPE.key()
-            .location()
-            .toString()
-            .toUpperCase(Locale.ROOT), ModRenderType.sparkleParticle(TextureAtlas.LOCATION_PARTICLES));
+public class SparkleParticle extends SingleQuadParticle {
+    /**
+     * Custom blend function for supporting proper translucency.
+     *
+     * @see RenderPipelines#TRANSLUCENT_PARTICLE
+     */
+    public static final RenderPipeline SPARKLE_PARTICLE_RENDER_PIPELINE = RenderPipeline.builder(RenderPipelines.PARTICLE_SNIPPET)
+            .withLocation(PortableHole.id("pipeline/sparkle_particle"))
+            .withBlend(BlendFunction.LIGHTNING)
+            .build();
+    public static final SingleQuadParticle.Layer SPARKLE_PARTICLE_LAYER = new SingleQuadParticle.Layer(true,
+            TextureAtlas.LOCATION_PARTICLES,
+            SPARKLE_PARTICLE_RENDER_PIPELINE);
 
     private final boolean corrupt;
     private final boolean fake;
     private final boolean slowdown = true;
-    private final SpriteSet sprite;
+    private final SpriteSet sprites;
 
-    public FXSparkle(ClientLevel world, double x, double y, double z, float size, float red, float green, float blue, int m, boolean fake, boolean noClip, boolean corrupt, SpriteSet sprite) {
-        super(world, x, y, z, 0.0D, 0.0D, 0.0D);
+    public SparkleParticle(ClientLevel clientLevel, double x, double y, double z, float size, float red, float green, float blue, int m, boolean fake, boolean noClip, boolean corrupt, SpriteSet sprites) {
+        super(clientLevel, x, y, z, 0.0, 0.0, 0.0, sprites.first());
         this.rCol = red;
         this.gCol = green;
         this.bCol = blue;
@@ -50,8 +61,8 @@ public class FXSparkle extends TextureSheetParticle {
         this.fake = fake;
         this.corrupt = corrupt;
         this.hasPhysics = !fake && !noClip;
-        this.sprite = sprite;
-        this.setSpriteFromAge(sprite);
+        this.sprites = sprites;
+        this.setSpriteFromAge(sprites);
     }
 
     @Override
@@ -61,7 +72,7 @@ public class FXSparkle extends TextureSheetParticle {
 
     @Override
     public void tick() {
-        this.setSpriteFromAge(this.sprite);
+        this.setSpriteFromAge(this.sprites);
         this.xo = this.x;
         this.yo = this.y;
         this.zo = this.z;
@@ -71,13 +82,11 @@ public class FXSparkle extends TextureSheetParticle {
         }
 
         this.yd -= 0.04D * this.gravity;
-
         if (this.hasPhysics && !this.fake) {
             this.wiggleAround(this.x, (this.getBoundingBox().minY + this.getBoundingBox().maxY) / 2.0D, this.z);
         }
 
         this.move(this.xd, this.yd, this.zd);
-
         if (this.slowdown) {
             this.xd *= 0.908;
             this.yd *= 0.908;
@@ -95,11 +104,11 @@ public class FXSparkle extends TextureSheetParticle {
     }
 
     @Override
-    public ParticleRenderType getRenderType() {
+    protected Layer getLayer() {
         if (PortableHole.CONFIG.get(ClientConfig.class).opaqueSparkleParticles) {
-            return ParticleRenderType.PARTICLE_SHEET_OPAQUE;
+            return Layer.OPAQUE;
         } else {
-            return SPARKLE_PARTICLE_RENDER_TYPE;
+            return SPARKLE_PARTICLE_LAYER;
         }
     }
 
@@ -152,17 +161,16 @@ public class FXSparkle extends TextureSheetParticle {
         }
     }
 
-    // moved here from SparkleParticleType
-    public static class Factory implements ParticleProvider<SparkleParticleData> {
-        private final SpriteSet sprite;
+    public static class Factory implements ParticleProvider<SparkleParticleOptions> {
+        private final SpriteSet sprites;
 
-        public Factory(SpriteSet sprite) {
-            this.sprite = sprite;
+        public Factory(SpriteSet sprites) {
+            this.sprites = sprites;
         }
 
         @Override
-        public Particle createParticle(SparkleParticleData data, ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
-            return new FXSparkle(level,
+        public Particle createParticle(SparkleParticleOptions data, ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, RandomSource randomSource) {
+            return new SparkleParticle(level,
                     x,
                     y,
                     z,
@@ -174,7 +182,7 @@ public class FXSparkle extends TextureSheetParticle {
                     data.fake,
                     data.noClip,
                     data.corrupt,
-                    this.sprite);
+                    this.sprites);
         }
     }
 }

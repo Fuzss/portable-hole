@@ -1,8 +1,7 @@
 package fuzs.portablehole.init;
 
 import fuzs.portablehole.PortableHole;
-import fuzs.portablehole.core.particles.SparkleParticleData;
-import fuzs.portablehole.core.particles.SparkleParticleType;
+import fuzs.portablehole.core.particles.SparkleParticleOptions;
 import fuzs.portablehole.world.item.PortableHoleItem;
 import fuzs.portablehole.world.level.block.TemporaryHoleBlock;
 import fuzs.portablehole.world.level.block.entity.TemporaryHoleBlockEntity;
@@ -33,11 +32,18 @@ public class ModRegistry {
             TEMPORARY_HOLE_BLOCK);
     public static final Holder.Reference<Item> PORTABLE_HOLE_ITEM = REGISTRIES.registerItem("portable_hole",
             PortableHoleItem::new,
-            () -> new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON));
-    public static final Holder.Reference<ParticleType<SparkleParticleData>> SPARKLE_PARTICLE_TYPE = REGISTRIES.register(
-            Registries.PARTICLE_TYPE,
+            () -> {
+                return new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON);
+            });
+    public static final Holder.Reference<ParticleType<SparkleParticleOptions>> SPARKLE_PARTICLE_TYPE = REGISTRIES.registerParticleType(
             "sparkle",
-            SparkleParticleType::new);
+            false,
+            (ParticleType<SparkleParticleOptions> particleType) -> {
+                return SparkleParticleOptions.CODEC;
+            },
+            (ParticleType<SparkleParticleOptions> particleType) -> {
+                return SparkleParticleOptions.STREAM_CODEC;
+            });
 
     public static final ResourceKey<LootTable> STRONGHOLD_CORRIDOR_INJECT_LOOT_TABLE = REGISTRIES.makeResourceKey(
             Registries.LOOT_TABLE,
@@ -53,7 +59,7 @@ public class ModRegistry {
     public static BlockBehaviour.Properties temporaryHole() {
         return BlockBehaviour.Properties.of()
                 .mapColor(MapColor.COLOR_BLACK)
-                .noCollission()
+                .noCollision()
                 .lightLevel((BlockState blockState) -> {
                     return 15;
                 })

@@ -3,7 +3,7 @@ package fuzs.portablehole.world.level.block;
 import com.mojang.serialization.MapCodec;
 import fuzs.portablehole.PortableHole;
 import fuzs.portablehole.config.ServerConfig;
-import fuzs.portablehole.core.particles.SparkleParticleData;
+import fuzs.portablehole.core.particles.SparkleParticleOptions;
 import fuzs.portablehole.init.ModRegistry;
 import fuzs.portablehole.world.level.block.entity.TemporaryHoleBlockEntity;
 import fuzs.puzzleslib.api.block.v1.entity.TickingEntityBlock;
@@ -79,11 +79,14 @@ public class TemporaryHoleBlock extends BaseEntityBlock implements TickingEntity
 
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
-        if (!PortableHole.CONFIG.get(ServerConfig.class).sparkParticles) return;
+        if (!PortableHole.CONFIG.get(ServerConfig.class).visuals.sparkParticles) {
+            return;
+        }
+
         if (level.getBlockEntity(pos) instanceof TemporaryHoleBlockEntity blockEntity) {
             if (blockEntity.getSourceBlockState() != null) {
                 int color = ChatFormatting.BLUE.getColor();
-                SparkleParticleData sparkle = SparkleParticleData.noClip(1.0F,
+                SparkleParticleOptions sparkle = SparkleParticleOptions.noClip(1.0F,
                         (color >> 16 & 0xFF) / 255.0F,
                         (color >> 8 & 0xFF) / 255.0F,
                         (color & 0xFF) / 255.0F,

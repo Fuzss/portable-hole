@@ -84,6 +84,12 @@ public class TemporaryHoleBlockEntity extends BlockEntity implements TickingBloc
         return this.sourceState;
     }
 
+    public boolean shouldRenderFace(Direction direction) {
+        BlockPos blockPos = this.getBlockPos();
+        BlockState neighborBlockState = this.getLevel().getBlockState(blockPos.relative(direction));
+        return !Block.shouldRenderFace(this.getBlockState(), neighborBlockState, direction);
+    }
+
     @Override
     public void serverTick() {
         if (this.sourceState == null) {
@@ -99,7 +105,7 @@ public class TemporaryHoleBlockEntity extends BlockEntity implements TickingBloc
                             blockEntity::loadWithComponents);
                 }
             }
-            if (PortableHole.CONFIG.get(ServerConfig.class).particlesForReappearingBlocks) {
+            if (PortableHole.CONFIG.get(ServerConfig.class).visuals.particlesForReappearingBlocks) {
                 // plays the block breaking sound to provide some feedback
                 this.getLevel()
                         .levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK,

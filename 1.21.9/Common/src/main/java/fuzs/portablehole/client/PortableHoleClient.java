@@ -1,7 +1,6 @@
 package fuzs.portablehole.client;
 
-import fuzs.portablehole.client.particle.FXSparkle;
-import fuzs.portablehole.client.renderer.ModRenderType;
+import fuzs.portablehole.client.particle.SparkleParticle;
 import fuzs.portablehole.client.renderer.blockentity.TemporaryHoleRenderer;
 import fuzs.portablehole.init.ModRegistry;
 import fuzs.portablehole.world.item.PortableHoleItem;
@@ -26,11 +25,11 @@ public class PortableHoleClient implements ClientModConstructor {
 
     @Override
     public void onRegisterParticleProviders(ParticleProvidersContext context) {
-        context.registerParticleProvider(ModRegistry.SPARKLE_PARTICLE_TYPE.value(), FXSparkle.Factory::new);
+        context.registerParticleProvider(ModRegistry.SPARKLE_PARTICLE_TYPE.value(), SparkleParticle.Factory::new);
     }
 
     @Override
     public void onRegisterRenderPipelines(RenderPipelinesContext context) {
-        context.registerRenderPipeline(ModRenderType.SPARKLE_PARTICLE_RENDER_PIPELINE);
+        context.registerRenderPipeline(SparkleParticle.SPARKLE_PARTICLE_RENDER_PIPELINE);
     }
 }

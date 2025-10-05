@@ -33,7 +33,7 @@ public class PortableHoleItem extends Item {
         Player player = context.getPlayer();
         Direction clickedFace = context.getClickedFace();
         if (TemporaryHoleBlockEntity.isValidHolePosition(level, clickedPos)) {
-            if (!level.isClientSide) {
+            if (!level.isClientSide()) {
                 List<BlockPos> positionsInPlane = BlockPos.betweenClosedStream(-1, -1, -1, 1, 1, 1)
                         .filter((BlockPos pos) -> {
                             return clickedFace.getAxis().choose(pos.getX(), pos.getY(), pos.getZ()) == 0;
@@ -59,7 +59,7 @@ public class PortableHoleItem extends Item {
                         .addCooldown(itemInHand, PortableHole.CONFIG.get(ServerConfig.class).portableHoleCooldown);
                 player.awardStat(Stats.ITEM_USED.get(this));
             }
-            return InteractionResultHelper.sidedSuccess(level.isClientSide);
+            return InteractionResultHelper.sidedSuccess(level.isClientSide());
         } else {
             return InteractionResult.PASS;
         }
