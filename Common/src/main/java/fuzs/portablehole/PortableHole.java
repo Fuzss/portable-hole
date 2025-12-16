@@ -5,11 +5,10 @@ import fuzs.portablehole.config.ServerConfig;
 import fuzs.portablehole.init.ModRegistry;
 import fuzs.puzzleslib.api.config.v3.ConfigHolder;
 import fuzs.puzzleslib.api.core.v1.ModConstructor;
-import fuzs.puzzleslib.api.core.v1.utility.ResourceLocationHelper;
 import fuzs.puzzleslib.api.event.v1.BuildCreativeModeTabContentsCallback;
 import fuzs.puzzleslib.api.event.v1.server.LootTableLoadCallback;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
@@ -36,8 +35,8 @@ public class PortableHole implements ModConstructor {
     }
 
     private static void registerEventHandlers() {
-        LootTableLoadCallback.EVENT.register((ResourceLocation resourceLocation, LootTable.Builder builder, HolderLookup.Provider provider) -> {
-            if (BuiltInLootTables.STRONGHOLD_CORRIDOR.location().equals(resourceLocation)) {
+        LootTableLoadCallback.EVENT.register((Identifier identifier, LootTable.Builder builder, HolderLookup.Provider provider) -> {
+            if (BuiltInLootTables.STRONGHOLD_CORRIDOR.identifier().equals(identifier)) {
                 builder.withPool(LootPool.lootPool()
                         .setRolls(ConstantValue.exactly(1.0F))
                         .add(NestedLootTable.lootTableReference(ModRegistry.STRONGHOLD_CORRIDOR_INJECT_LOOT_TABLE)));
@@ -49,7 +48,7 @@ public class PortableHole implements ModConstructor {
                 });
     }
 
-    public static ResourceLocation id(String path) {
-        return ResourceLocationHelper.fromNamespaceAndPath(MOD_ID, path);
+    public static Identifier id(String path) {
+        return Identifier.fromNamespaceAndPath(MOD_ID, path);
     }
 }

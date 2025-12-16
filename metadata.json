@@ -1,0 +1,61 @@
+{
+    "mod": {
+        "id": "portablehole",
+        "group": "fuzs.portablehole",
+        "name": "Portable Hole",
+        "version": "21.11.0",
+        "authors": [
+            "Fuzs"
+        ],
+        "description": "Where did the walls go?",
+        "license": "MPL-2.0"
+    },
+    "dependencies": [
+        {
+            "name": "fabricapi",
+            "type": "required",
+            "platforms": [
+                "fabric"
+            ]
+        },
+        {
+            "name": "forgeconfigapiport",
+            "type": "required",
+            "platforms": [
+                "fabric"
+            ]
+        },
+        {
+            "name": "puzzleslib",
+            "type": "required",
+            "platforms": [
+                "fabric",
+                "neoforge"
+            ]
+        }
+    ],
+    "links": [
+        {
+            "name": "github",
+            "slug": "portablehole"
+        },
+        {
+            "name": "curseforge",
+            "slug": "portable-hole",
+            "id": "682568"
+        },
+        {
+            "name": "modrinth",
+            "slug": "portable-hole",
+            "id": "jckrUoUe"
+        }
+    ],
+    "environments": {
+        "client": "required",
+        "server": "required"
+    },
+    "platforms": [
+        "fabric",
+        "neoforge"
+    ]
+}

@@ -5,17 +5,17 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import fuzs.portablehole.PortableHole;
 import fuzs.portablehole.config.ServerConfig;
 import fuzs.portablehole.world.level.block.entity.TemporaryHoleBlockEntity;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.state.EndPortalRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
+import org.jspecify.annotations.Nullable;
 
 import java.util.EnumSet;
 
@@ -31,7 +31,7 @@ public class TemporaryHoleRenderer implements BlockEntityRenderer<TemporaryHoleB
     }
 
     @Override
-    public void extractRenderState(TemporaryHoleBlockEntity blockEntity, EndPortalRenderState renderState, float partialTick, Vec3 cameraPosition, @Nullable ModelFeatureRenderer.CrumblingOverlay crumblingOverlay) {
+    public void extractRenderState(TemporaryHoleBlockEntity blockEntity, EndPortalRenderState renderState, float partialTick, Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay crumblingOverlay) {
         BlockEntityRenderer.super.extractRenderState(blockEntity,
                 renderState,
                 partialTick,
@@ -52,7 +52,7 @@ public class TemporaryHoleRenderer implements BlockEntityRenderer<TemporaryHoleB
         }
 
         submitNodeCollector.submitCustomGeometry(poseStack,
-                RenderType.endGateway(),
+                RenderTypes.endGateway(),
                 (PoseStack.Pose pose, VertexConsumer vertexConsumer) -> {
                     this.renderCube(renderState.facesToShow, pose.pose(), vertexConsumer);
                 });

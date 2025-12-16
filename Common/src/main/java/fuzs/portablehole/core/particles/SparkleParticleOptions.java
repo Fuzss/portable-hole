@@ -16,7 +16,7 @@ import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 public class SparkleParticleOptions implements ParticleOptions {
     public static final MapCodec<SparkleParticleOptions> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
@@ -66,7 +66,7 @@ public class SparkleParticleOptions implements ParticleOptions {
         this.corrupt = corrupt;
     }
 
-    @NotNull
+    @NonNull
     @Override
     public ParticleType<SparkleParticleOptions> getType() {
         return ModRegistry.SPARKLE_PARTICLE_TYPE.value();
