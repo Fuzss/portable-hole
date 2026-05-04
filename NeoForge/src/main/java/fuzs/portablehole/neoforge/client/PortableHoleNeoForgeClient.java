@@ -1,9 +1,9 @@
 package fuzs.portablehole.neoforge.client;
 
-import fuzs.portablehole.PortableHole;
-import fuzs.portablehole.client.PortableHoleClient;
-import fuzs.portablehole.data.client.ModLanguageProvider;
-import fuzs.portablehole.data.client.ModModelProvider;
+import fuzs.portablehole.common.PortableHole;
+import fuzs.portablehole.common.client.PortableHoleClient;
+import fuzs.portablehole.common.data.client.ModLanguageProvider;
+import fuzs.portablehole.common.data.client.ModModelProvider;
 import fuzs.puzzleslib.common.api.client.core.v1.ClientModConstructor;
 import fuzs.puzzleslib.neoforge.api.data.v2.core.DataProviderHelper;
 import net.neoforged.api.distmarker.Dist;

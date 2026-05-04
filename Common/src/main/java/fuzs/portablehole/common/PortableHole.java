@@ -1,0 +1,54 @@
+package fuzs.portablehole.common;
+
+import fuzs.portablehole.common.config.ClientConfig;
+import fuzs.portablehole.common.config.ServerConfig;
+import fuzs.portablehole.common.init.ModRegistry;
+import fuzs.puzzleslib.common.api.config.v3.ConfigHolder;
+import fuzs.puzzleslib.common.api.core.v1.ModConstructor;
+import fuzs.puzzleslib.common.api.event.v1.BuildCreativeModeTabContentsCallback;
+import fuzs.puzzleslib.common.api.event.v1.server.LootTableLoadCallback;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.level.storage.loot.BuiltInLootTables;
+import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.entries.NestedLootTable;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+public class PortableHole implements ModConstructor {
+    public static final String MOD_ID = "portablehole";
+    public static final String MOD_NAME = "Portable Hole";
+    public static final Logger LOGGER = LogManager.getLogger(MOD_NAME);
+
+    public static final ConfigHolder CONFIG = ConfigHolder.builder(MOD_ID)
+            .client(ClientConfig.class)
+            .server(ServerConfig.class);
+
+    @Override
+    public void onConstructMod() {
+        ModRegistry.bootstrap();
+        registerEventHandlers();
+    }
+
+    private static void registerEventHandlers() {
+        LootTableLoadCallback.EVENT.register((Identifier identifier, LootTable.Builder builder, HolderLookup.Provider provider) -> {
+            if (BuiltInLootTables.STRONGHOLD_CORRIDOR.identifier().equals(identifier)) {
+                builder.withPool(LootPool.lootPool()
+                        .setRolls(ConstantValue.exactly(1.0F))
+                        .add(NestedLootTable.lootTableReference(ModRegistry.STRONGHOLD_CORRIDOR_INJECT_LOOT_TABLE)));
+            }
+        });
+        BuildCreativeModeTabContentsCallback.buildCreativeModeTabContents(CreativeModeTabs.TOOLS_AND_UTILITIES)
+                .register((CreativeModeTab creativeModeTab, CreativeModeTab.ItemDisplayParameters itemDisplayParameters, CreativeModeTab.Output output) -> {
+                    output.accept(ModRegistry.PORTABLE_HOLE_ITEM.value());
+                });
+    }
+
+    public static Identifier id(String path) {
+        return Identifier.fromNamespaceAndPath(MOD_ID, path);
+    }
+}

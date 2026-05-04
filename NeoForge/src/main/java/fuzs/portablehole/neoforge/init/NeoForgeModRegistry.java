@@ -1,7 +1,7 @@
 package fuzs.portablehole.neoforge.init;
 
-import fuzs.portablehole.PortableHole;
-import fuzs.portablehole.init.ModRegistry;
+import fuzs.portablehole.common.PortableHole;
+import fuzs.portablehole.common.init.ModRegistry;
 import fuzs.portablehole.neoforge.world.level.block.NeoForgeTemporaryHoleBlock;
 import fuzs.puzzleslib.common.api.init.v3.registry.RegistryManager;
 import net.minecraft.core.Holder;
