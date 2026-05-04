@@ -3,8 +3,8 @@ package fuzs.portablehole.world.level.block.entity;
 import fuzs.portablehole.PortableHole;
 import fuzs.portablehole.config.ServerConfig;
 import fuzs.portablehole.init.ModRegistry;
-import fuzs.puzzleslib.api.block.v1.entity.TickingBlockEntity;
-import fuzs.puzzleslib.api.util.v1.ValueSerializationHelper;
+import fuzs.puzzleslib.common.api.block.v1.entity.TickingBlockEntity;
+import fuzs.puzzleslib.common.api.util.v1.ValueSerializationHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -13,6 +13,7 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -91,59 +92,58 @@ public class TemporaryHoleBlockEntity extends BlockEntity implements TickingBloc
     }
 
     @Override
-    public void serverTick() {
+    public void serverTick(ServerLevel serverLevel, BlockPos blockPos, BlockState blockState) {
         if (this.sourceState == null) {
-            this.getLevel().removeBlock(this.getBlockPos(), false);
+            serverLevel.removeBlock(blockPos, false);
         } else if (this.lifetimeTicks <= 0) {
-            this.getLevel().setBlock(this.getBlockPos(), this.sourceState, 3);
+            serverLevel.setBlock(blockPos, this.sourceState, 3);
             if (this.blockEntityTag != null) {
-                BlockEntity blockEntity = this.getLevel().getBlockEntity(this.getBlockPos());
+                BlockEntity blockEntity = serverLevel.getBlockEntity(blockPos);
                 if (blockEntity != null) {
                     ValueSerializationHelper.load(this.problemPath(),
-                            this.getLevel().registryAccess(),
+                            serverLevel.registryAccess(),
                             this.blockEntityTag,
                             blockEntity::loadWithComponents);
                 }
             }
             if (PortableHole.CONFIG.get(ServerConfig.class).visuals.particlesForReappearingBlocks) {
                 // plays the block breaking sound to provide some feedback
-                this.getLevel()
-                        .levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK,
-                                this.getBlockPos(),
-                                Block.getId(this.sourceState));
+                serverLevel.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, blockPos, Block.getId(this.sourceState));
             }
         } else {
             this.lifetimeTicks--;
-            tryGrowInDirection(this.getLevel(), this.getBlockPos(), this);
+            this.tryGrowInDirection(serverLevel, blockPos);
         }
     }
 
-    private static void tryGrowInDirection(Level level, BlockPos pos, TemporaryHoleBlockEntity blockEntity) {
-        if (blockEntity.growthDistance > 0 && blockEntity.growthDirection != null) {
-            setTemporaryHoleBlock(level,
-                    pos.relative(blockEntity.growthDirection),
-                    blockEntity.growthDirection,
-                    blockEntity.growthDistance - 1);
-            blockEntity.growthDistance = 0;
-            blockEntity.growthDirection = null;
+    private void tryGrowInDirection(ServerLevel serverLevel, BlockPos blockPos) {
+        if (this.growthDistance > 0 && this.growthDirection != null) {
+            setTemporaryHoleBlock(serverLevel,
+                    blockPos.relative(this.growthDirection),
+                    this.growthDirection,
+                    this.growthDistance - 1);
+            this.growthDistance = 0;
+            this.growthDirection = null;
         }
     }
 
-    public static boolean setTemporaryHoleBlock(Level level, BlockPos blockPos, Direction growthDirection, int growthDistance) {
-        if (isValidHolePosition(level, blockPos)) {
-            BlockState state = level.getBlockState(blockPos);
+    public static boolean setTemporaryHoleBlock(ServerLevel serverLevel, BlockPos blockPos, Direction growthDirection, int growthDistance) {
+        if (isValidHolePosition(serverLevel, blockPos)) {
+            BlockState state = serverLevel.getBlockState(blockPos);
             CompoundTag blockEntityTag = null;
             if (PortableHole.CONFIG.get(ServerConfig.class).replaceBlockEntities) {
-                BlockEntity blockEntity = level.getBlockEntity(blockPos);
+                BlockEntity blockEntity = serverLevel.getBlockEntity(blockPos);
                 if (blockEntity != null) {
-                    blockEntityTag = blockEntity.saveWithoutMetadata(level.registryAccess());
+                    blockEntityTag = blockEntity.saveWithoutMetadata(serverLevel.registryAccess());
                 }
             }
+
             boolean replaceBlock = !state.is(ModRegistry.TEMPORARY_HOLE_BLOCK.value());
             if (replaceBlock) {
-                level.setBlock(blockPos, ModRegistry.TEMPORARY_HOLE_BLOCK.value().defaultBlockState(), 3);
+                serverLevel.setBlock(blockPos, ModRegistry.TEMPORARY_HOLE_BLOCK.value().defaultBlockState(), 3);
             }
-            if (level.getBlockEntity(blockPos) instanceof TemporaryHoleBlockEntity blockEntity) {
+
+            if (serverLevel.getBlockEntity(blockPos) instanceof TemporaryHoleBlockEntity blockEntity) {
                 if (replaceBlock) {
                     blockEntity.sourceState = state;
                     blockEntity.blockEntityTag = blockEntityTag;
@@ -152,8 +152,10 @@ public class TemporaryHoleBlockEntity extends BlockEntity implements TickingBloc
                 blockEntity.growthDistance = growthDistance;
                 blockEntity.lifetimeTicks = PortableHole.CONFIG.get(ServerConfig.class).temporaryHoleDuration;
             }
+
             return true;
         }
+
         return false;
     }
 
@@ -169,11 +171,13 @@ public class TemporaryHoleBlockEntity extends BlockEntity implements TickingBloc
                 if (block instanceof DoublePlantBlock || block instanceof DoorBlock || block instanceof BedBlock) {
                     return false;
                 }
+
                 float destroySpeed = blockState.getDestroySpeed(level, blockPos);
                 return destroySpeed != -1.0F
                         && destroySpeed <= PortableHole.CONFIG.get(ServerConfig.class).maxBlockHardness;
             }
         }
+
         return false;
     }
 }

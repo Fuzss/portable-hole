@@ -11,13 +11,13 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.state.EndPortalRenderState;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 import org.jspecify.annotations.Nullable;
 
-import java.util.EnumSet;
+import java.util.Set;
 
 public class TemporaryHoleRenderer implements BlockEntityRenderer<TemporaryHoleBlockEntity, EndPortalRenderState> {
 
@@ -58,7 +58,7 @@ public class TemporaryHoleRenderer implements BlockEntityRenderer<TemporaryHoleB
                 });
     }
 
-    private void renderCube(EnumSet<Direction> facesToShow, Matrix4f matrix4f, VertexConsumer vertexConsumer) {
+    private void renderCube(Set<Direction> facesToShow, Matrix4f matrix4f, VertexConsumer vertexConsumer) {
         // don't render in same z-level as opposite face from other block, same offset as shulker boxes
         this.renderFace(facesToShow,
                 matrix4f,
@@ -134,7 +134,7 @@ public class TemporaryHoleRenderer implements BlockEntityRenderer<TemporaryHoleB
                 Direction.UP);
     }
 
-    private void renderFace(EnumSet<Direction> facesToShow, Matrix4f matrix4f, VertexConsumer vertexConsumer, float x0, float x1, float y0, float y1, float z0, float z1, float z2, float z3, Direction direction) {
+    private void renderFace(Set<Direction> facesToShow, Matrix4f matrix4f, VertexConsumer vertexConsumer, float x0, float x1, float y0, float y1, float z0, float z1, float z2, float z3, Direction direction) {
         if (facesToShow.contains(direction)) {
             vertexConsumer.addVertex(matrix4f, x0, y1, z3);
             vertexConsumer.addVertex(matrix4f, x1, y1, z2);

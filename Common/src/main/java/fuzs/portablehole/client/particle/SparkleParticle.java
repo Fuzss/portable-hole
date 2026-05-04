@@ -9,6 +9,7 @@
 package fuzs.portablehole.client.particle;
 
 import com.mojang.blaze3d.pipeline.BlendFunction;
+import com.mojang.blaze3d.pipeline.ColorTargetState;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import fuzs.portablehole.PortableHole;
 import fuzs.portablehole.config.ClientConfig;
@@ -33,7 +34,7 @@ public class SparkleParticle extends SingleQuadParticle {
      */
     public static final RenderPipeline SPARKLE_PARTICLE_RENDER_PIPELINE = RenderPipeline.builder(RenderPipelines.PARTICLE_SNIPPET)
             .withLocation(PortableHole.id("pipeline/sparkle_particle"))
-            .withBlend(BlendFunction.LIGHTNING)
+            .withColorTargetState(new ColorTargetState(BlendFunction.LIGHTNING))
             .build();
     public static final SingleQuadParticle.Layer SPARKLE_PARTICLE_LAYER = new SingleQuadParticle.Layer(true,
             TextureAtlas.LOCATION_PARTICLES,

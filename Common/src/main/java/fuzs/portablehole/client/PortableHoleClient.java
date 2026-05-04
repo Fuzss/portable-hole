@@ -4,11 +4,11 @@ import fuzs.portablehole.client.particle.SparkleParticle;
 import fuzs.portablehole.client.renderer.blockentity.TemporaryHoleRenderer;
 import fuzs.portablehole.init.ModRegistry;
 import fuzs.portablehole.world.item.PortableHoleItem;
-import fuzs.puzzleslib.api.client.core.v1.ClientModConstructor;
-import fuzs.puzzleslib.api.client.core.v1.context.BlockEntityRenderersContext;
-import fuzs.puzzleslib.api.client.core.v1.context.ParticleProvidersContext;
-import fuzs.puzzleslib.api.client.core.v1.context.RenderPipelinesContext;
-import fuzs.puzzleslib.api.client.gui.v2.tooltip.ItemTooltipRegistry;
+import fuzs.puzzleslib.common.api.client.core.v1.ClientModConstructor;
+import fuzs.puzzleslib.common.api.client.core.v1.context.BlockEntityRenderersContext;
+import fuzs.puzzleslib.common.api.client.core.v1.context.ParticleProvidersContext;
+import fuzs.puzzleslib.common.api.client.core.v1.context.RenderPipelinesContext;
+import fuzs.puzzleslib.common.api.client.gui.v2.tooltip.ItemTooltipRegistry;
 
 public class PortableHoleClient implements ClientModConstructor {
 

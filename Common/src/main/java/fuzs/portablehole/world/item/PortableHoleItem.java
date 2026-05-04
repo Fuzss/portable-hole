@@ -3,11 +3,11 @@ package fuzs.portablehole.world.item;
 import fuzs.portablehole.PortableHole;
 import fuzs.portablehole.config.ServerConfig;
 import fuzs.portablehole.world.level.block.entity.TemporaryHoleBlockEntity;
-import fuzs.puzzleslib.api.util.v1.InteractionResultHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
@@ -33,7 +33,7 @@ public class PortableHoleItem extends Item {
         Player player = context.getPlayer();
         Direction clickedFace = context.getClickedFace();
         if (TemporaryHoleBlockEntity.isValidHolePosition(level, clickedPos)) {
-            if (!level.isClientSide()) {
+            if (level instanceof ServerLevel serverLevel) {
                 List<BlockPos> positionsInPlane = BlockPos.betweenClosedStream(-1, -1, -1, 1, 1, 1)
                         .filter((BlockPos pos) -> {
                             return clickedFace.getAxis().choose(pos.getX(), pos.getY(), pos.getZ()) == 0;
@@ -41,25 +41,27 @@ public class PortableHoleItem extends Item {
                         .map(BlockPos::immutable)
                         .toList();
                 for (BlockPos pos : positionsInPlane) {
-                    TemporaryHoleBlockEntity.setTemporaryHoleBlock(level,
+                    TemporaryHoleBlockEntity.setTemporaryHoleBlock(serverLevel,
                             pos.offset(clickedPos),
                             clickedFace.getOpposite(),
                             PortableHole.CONFIG.get(ServerConfig.class).temporaryHoleDepth);
                 }
-                level.playSound(null,
+
+                serverLevel.playSound(null,
                         clickedPos.getX(),
                         clickedPos.getY(),
                         clickedPos.getZ(),
                         SoundEvents.ENDERMAN_TELEPORT,
                         SoundSource.NEUTRAL,
                         0.5F,
-                        0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F));
+                        0.4F / (serverLevel.getRandom().nextFloat() * 0.4F + 0.8F));
                 ItemStack itemInHand = player.getItemInHand(context.getHand());
                 player.getCooldowns()
                         .addCooldown(itemInHand, PortableHole.CONFIG.get(ServerConfig.class).portableHoleCooldown);
                 player.awardStat(Stats.ITEM_USED.get(this));
             }
-            return InteractionResultHelper.sidedSuccess(level.isClientSide());
+
+            return InteractionResult.SUCCESS;
         } else {
             return InteractionResult.PASS;
         }

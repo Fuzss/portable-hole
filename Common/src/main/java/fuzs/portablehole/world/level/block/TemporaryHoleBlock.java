@@ -6,7 +6,7 @@ import fuzs.portablehole.config.ServerConfig;
 import fuzs.portablehole.core.particles.SparkleParticleOptions;
 import fuzs.portablehole.init.ModRegistry;
 import fuzs.portablehole.world.level.block.entity.TemporaryHoleBlockEntity;
-import fuzs.puzzleslib.api.block.v1.entity.TickingEntityBlock;
+import fuzs.puzzleslib.common.api.block.v1.entity.TickingEntityBlock;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
