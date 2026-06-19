@@ -8,16 +8,16 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Block;
 
-public class ModBlockTagProvider extends AbstractTagProvider<Block> {
+public class ModBlockTagsProvider extends AbstractTagProvider<Block> {
 
-    public ModBlockTagProvider(DataProviderContext context) {
+    public ModBlockTagsProvider(DataProviderContext context) {
         super(Registries.BLOCK, context);
     }
 
     @Override
     public void addTags(HolderLookup.Provider provider) {
-        this.tag(BlockTags.SUBSTRATE_OVERWORLD).add(ModRegistry.TEMPORARY_HOLE_BLOCK.value());
-        this.tag(BlockTags.SUPPORTS_CROPS).add(ModRegistry.TEMPORARY_HOLE_BLOCK.value());
+        this.tag(BlockTags.SUBSTRATE_OVERWORLD).add(ModRegistry.TEMPORARY_HOLE_BLOCK);
+        this.tag(BlockTags.SUPPORTS_CROPS).add(ModRegistry.TEMPORARY_HOLE_BLOCK);
         this.tag(ModRegistry.PORTABLE_HOLE_IMMUNE_BLOCK_TAG);
     }
 }

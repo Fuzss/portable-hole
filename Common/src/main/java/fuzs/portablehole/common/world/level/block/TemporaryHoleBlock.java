@@ -7,8 +7,8 @@ import fuzs.portablehole.common.core.particles.SparkleParticleOptions;
 import fuzs.portablehole.common.init.ModRegistry;
 import fuzs.portablehole.common.world.level.block.entity.TemporaryHoleBlockEntity;
 import fuzs.puzzleslib.common.api.block.v1.entity.TickingEntityBlock;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -85,7 +85,7 @@ public class TemporaryHoleBlock extends BaseEntityBlock implements TickingEntity
 
         if (level.getBlockEntity(pos) instanceof TemporaryHoleBlockEntity blockEntity) {
             if (blockEntity.getSourceBlockState() != null) {
-                int color = ChatFormatting.BLUE.getColor();
+                int color = TextColor.BLUE.getValue();
                 SparkleParticleOptions sparkle = SparkleParticleOptions.noClip(1.0F,
                         (color >> 16 & 0xFF) / 255.0F,
                         (color >> 8 & 0xFF) / 255.0F,

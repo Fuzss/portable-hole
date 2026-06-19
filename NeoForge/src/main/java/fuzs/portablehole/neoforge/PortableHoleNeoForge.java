@@ -1,7 +1,7 @@
 package fuzs.portablehole.neoforge;
 
 import fuzs.portablehole.common.PortableHole;
-import fuzs.portablehole.common.data.tags.ModBlockTagProvider;
+import fuzs.portablehole.common.data.tags.ModBlockTagsProvider;
 import fuzs.portablehole.common.data.loot.ModChestLootProvider;
 import fuzs.portablehole.neoforge.init.NeoForgeModRegistry;
 import fuzs.puzzleslib.common.api.core.v1.ModConstructor;
@@ -14,7 +14,7 @@ public class PortableHoleNeoForge {
     public PortableHoleNeoForge() {
         NeoForgeModRegistry.bootstrap();
         ModConstructor.construct(PortableHole.MOD_ID, PortableHole::new);
-        DataProviderHelper.registerDataProviders(PortableHole.MOD_ID, ModBlockTagProvider::new,
+        DataProviderHelper.registerDataProviders(PortableHole.MOD_ID, ModBlockTagsProvider::new,
                 ModChestLootProvider::new
         );
     }
