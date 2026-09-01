@@ -6,11 +6,17 @@
     "26.1.x": "maintained",
     "26.2.x": "primary"
   },
-  "properties": {
-    "distributions.curseforge.id": "682568",
-    "distributions.curseforge.slug": "portable-hole",
-    "distributions.github.slug": "portable-hole",
-    "distributions.modrinth.id": "jckrUoUe",
-    "distributions.modrinth.slug": "portable-hole"
+  "distributions": {
+    "curseforge": {
+      "id": "682568",
+      "slug": "portable-hole"
+    },
+    "github": {
+      "slug": "portable-hole"
+    },
+    "modrinth": {
+      "id": "jckrUoUe",
+      "slug": "portable-hole"
+    }
   }
 }
