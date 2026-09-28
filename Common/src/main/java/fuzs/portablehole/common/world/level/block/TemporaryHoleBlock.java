@@ -1,6 +1,5 @@
 package fuzs.portablehole.common.world.level.block;
 
-import com.mojang.serialization.MapCodec;
 import fuzs.portablehole.common.PortableHole;
 import fuzs.portablehole.common.config.ServerConfig;
 import fuzs.portablehole.common.core.particles.SparkleParticleOptions;
@@ -31,15 +30,9 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
 public class TemporaryHoleBlock extends BaseEntityBlock implements TickingEntityBlock<TemporaryHoleBlockEntity>, LiquidBlockContainer {
-    public static final MapCodec<TemporaryHoleBlock> CODEC = simpleCodec(TemporaryHoleBlock::new);
 
     public TemporaryHoleBlock(Properties properties) {
         super(properties);
-    }
-
-    @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return CODEC;
     }
 
     @Override

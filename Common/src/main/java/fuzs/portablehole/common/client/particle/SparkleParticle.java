@@ -8,9 +8,9 @@
  */
 package fuzs.portablehole.common.client.particle;
 
-import com.mojang.blaze3d.pipeline.BlendFunction;
-import com.mojang.blaze3d.pipeline.ColorTargetState;
-import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.renderpearl.api.pipeline.BlendFunction;
+import com.mojang.renderpearl.api.pipeline.ColorTargetState;
+import com.mojang.renderpearl.api.pipeline.RenderPipeline;
 import fuzs.portablehole.common.PortableHole;
 import fuzs.portablehole.common.config.ClientConfig;
 import fuzs.portablehole.common.core.particles.SparkleParticleOptions;

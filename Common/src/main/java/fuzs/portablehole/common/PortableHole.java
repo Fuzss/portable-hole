@@ -7,7 +7,7 @@ import fuzs.puzzleslib.common.api.config.v3.ConfigHolder;
 import fuzs.puzzleslib.common.api.core.v1.ModConstructor;
 import fuzs.puzzleslib.common.api.event.v1.BuildCreativeModeTabContentsCallback;
 import fuzs.puzzleslib.common.api.event.v1.server.LootTableLoadCallback;
-import net.minecraft.core.HolderLookup;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
@@ -15,7 +15,7 @@ import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.NestedLootTable;
-import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -35,11 +35,11 @@ public class PortableHole implements ModConstructor {
     }
 
     private static void registerEventHandlers() {
-        LootTableLoadCallback.EVENT.register((Identifier identifier, LootTable.Builder builder, HolderLookup.Provider provider) -> {
+        LootTableLoadCallback.EVENT.register((Identifier identifier, LootTable.Builder builder, HolderGetter.Provider provider) -> {
             if (BuiltInLootTables.STRONGHOLD_CORRIDOR.identifier().equals(identifier)) {
                 builder.withPool(LootPool.lootPool()
-                        .setRolls(ConstantValue.exactly(1.0F))
-                        .add(NestedLootTable.lootTableReference(ModRegistry.STRONGHOLD_CORRIDOR_INJECT_LOOT_TABLE)));
+                        .setRolls(ContextIntProviders.exactly(1))
+                        .add(NestedLootTable.lootTableReference(provider.getOrThrow(ModRegistry.STRONGHOLD_CORRIDOR_INJECT_LOOT_TABLE))));
             }
         });
         BuildCreativeModeTabContentsCallback.buildCreativeModeTabContents(CreativeModeTabs.TOOLS_AND_UTILITIES)

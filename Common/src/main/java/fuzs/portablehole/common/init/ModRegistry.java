@@ -65,6 +65,6 @@ public class ModRegistry {
                 })
                 .strength(-1.0F, 3600000.0F)
                 .noLootTable()
-                .pushReaction(PushReaction.BLOCK);
+                .pushReaction(PushReaction.IMMOVEABLE);
     }
 }
